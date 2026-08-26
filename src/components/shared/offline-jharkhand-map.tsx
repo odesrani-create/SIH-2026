@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ExternalLink, MapPin, Radio, WifiOff } from "lucide-react";
+import { MapPin, Radio, WifiOff } from "lucide-react";
 import type { Challenge, District } from "@/types";
 
 interface DistrictPoint {
@@ -33,7 +33,7 @@ export function OfflineJharkhandMap({ districts, challenges }: { districts: Dist
     [challenges, selectedDistrict]
   );
     const selectedPoint = DISTRICT_POINTS.find((point) => point.name === selectedDistrict) ?? DISTRICT_POINTS[3];
-    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=83.2%2C21.8%2C87.9%2C25.5&layer=mapnik&marker=${selectedPoint.latitude}%2C${selectedPoint.longitude}`;
+    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=83.35%2C22.05%2C87.85%2C25.35&layer=mapnik&marker=${selectedPoint.latitude}%2C${selectedPoint.longitude}`;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-jic-forest/20 bg-[#f4f1e5]">
@@ -49,17 +49,14 @@ export function OfflineJharkhandMap({ districts, challenges }: { districts: Dist
           <span className="inline-flex items-center gap-1.5 rounded-full bg-jic-forest-light px-3 py-1.5 text-xs font-semibold text-jic-forest">
             <WifiOff className="h-3.5 w-3.5" /> Local problem data
           </span>
-          <a href="https://organicmaps.app/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-jic-deep px-3 py-1.5 text-xs font-semibold text-jic-cream hover:bg-jic-forest">
-            Open in Organic Maps <ExternalLink className="h-3 w-3" />
-          </a>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-[1.35fr_0.65fr]">
         <div className="relative min-h-[390px] p-3 sm:p-6">
-          <iframe title="Live map of Jharkhand" src={mapUrl} className="h-[360px] w-full rounded-xl border border-jic-forest/20 bg-white" loading="lazy" />
+          <iframe title="Detailed road and path map of Jharkhand" src={mapUrl} className="h-[360px] w-full rounded-xl border border-jic-forest/20 bg-white" loading="lazy" />
           <div className="pointer-events-none absolute bottom-5 left-6 rounded-lg border border-jic-forest/15 bg-white/90 px-3 py-2 text-[11px] text-muted-foreground shadow-sm">
-            Live map · marker shows {selectedDistrict}
+            Jharkhand roads and paths · marker shows {selectedDistrict}
           </div>
         </div>
 
