@@ -10,12 +10,15 @@ import {
   Layers,
   Building2,
   Loader2,
+  Star,
+  GraduationCap,
+  School,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PriorityBadge, StatusBadge, DomainTag } from "@/components/shared/badges";
 import { DomainVisual } from "@/components/shared/domain-visual";
 import { useAppState } from "@/lib/app-state";
-import { CHALLENGES } from "@/data/demoData";
+import { CHALLENGES, CHALLENGE_CONTRIBUTIONS } from "@/data/demoData";
 import { classifyChallenge, matchInstitutions } from "@/services/aiService";
 import type { AIAnalysis, University } from "@/types";
 
@@ -26,6 +29,22 @@ export function ChallengeDetailPage() {
   const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
   const [institutions, setInstitutions] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
+  const contributions = CHALLENGE_CONTRIBUTIONS.filter((item) => item.challengeId === challenge.id);
+  const [appreciated, setAppreciated] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("jic-appreciated-contributors") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const appreciate = (id: string) => {
+    setAppreciated((current) => {
+      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
+      localStorage.setItem("jic-appreciated-contributors", JSON.stringify(next));
+      return next;
+    });
+  };
 
   useEffect(() => {
     let active = true;
@@ -113,6 +132,48 @@ export function ChallengeDetailPage() {
               ))}
             </div>
           </div>
+
+          <section className="mt-10 rounded-2xl border border-jic-saffron/35 bg-jic-saffron-light/45 p-5 sm:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-jic-earth">People behind the progress</p>
+                <h2 className="mt-1 font-display text-xl font-semibold text-jic-charcoal">Recognise the contributors</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Students, teachers and universities are turning this report into action.</p>
+              </div>
+              <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-jic-earth">{contributions.length} contributors</span>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {contributions.length > 0 ? contributions.map((person) => {
+                const hasAppreciated = appreciated.includes(person.id);
+                return (
+                  <div key={person.id} className="rounded-xl border border-white/80 bg-white/80 p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-jic-deep text-jic-saffron">
+                        {person.role === "Student" ? <GraduationCap className="h-4 w-4" /> : person.role === "Teacher" ? <School className="h-4 w-4" /> : <Building2 className="h-4 w-4" />}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-semibold text-jic-charcoal">{person.name}</p>
+                          <span className="rounded-full bg-jic-forest-light px-2 py-0.5 text-[10px] font-bold text-jic-forest">{person.role}</span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-muted-foreground">{person.organization}</p>
+                        <p className="mt-2 text-xs leading-relaxed text-jic-charcoal/75">{person.contribution}</p>
+                        <button
+                          type="button"
+                          aria-pressed={hasAppreciated}
+                          onClick={() => appreciate(person.id)}
+                          className={`mt-3 inline-flex items-center gap-1.5 text-xs font-semibold ${hasAppreciated ? "text-jic-earth" : "text-muted-foreground hover:text-jic-earth"}`}
+                        >
+                          <Star className={`h-3.5 w-3.5 ${hasAppreciated ? "fill-jic-saffron text-jic-earth" : ""}`} />
+                          {person.stars + (hasAppreciated ? 1 : 0)} appreciation stars
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }) : <p className="text-sm text-muted-foreground">Contributor updates will appear as teams begin work on this challenge.</p>}
+            </div>
+          </section>
 
           {user?.role === "university" || user?.role === "faculty" ? (
             <Button

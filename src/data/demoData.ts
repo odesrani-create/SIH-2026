@@ -677,3 +677,24 @@ export const INDUSTRY_ENGAGEMENT = [
   { type: "Technology", value: 18 },
   { type: "Deployment", value: 12 },
 ];
+
+export const CHALLENGE_CONTRIBUTIONS = [
+  { id: "contrib-001", challengeId: "ch-001", name: "Rohan Mahato", role: "Student" as const, organization: "Birla Institute of Technology, Mesra", contribution: "Built the low-cost pump health sensor prototype.", stars: 48 },
+  { id: "contrib-002", challengeId: "ch-001", name: "Dr. Anita Kujur", role: "Teacher" as const, organization: "Birla Institute of Technology, Mesra", contribution: "Guided field research and community testing in Dumka.", stars: 36 },
+  { id: "contrib-003", challengeId: "ch-001", name: "BIT Water Systems Lab", role: "University" as const, organization: "Birla Institute of Technology, Mesra", contribution: "Coordinated the pilot with the village water committee.", stars: 29 },
+  { id: "contrib-004", challengeId: "ch-002", name: "Meera Kumari", role: "Student" as const, organization: "Usha Martin University", contribution: "Designed the offline attendance workflow for remote schools.", stars: 31 },
+  { id: "contrib-005", challengeId: "ch-002", name: "Prof. N. Sahay", role: "Teacher" as const, organization: "Usha Martin University", contribution: "Validated the learning metrics with Gumla teachers.", stars: 24 },
+  { id: "contrib-006", challengeId: "ch-003", name: "IIT-ISM GeoSafety Centre", role: "University" as const, organization: "Indian School of Mines, Dhanbad", contribution: "Mapped high-risk subsidence zones and sensor sites.", stars: 42 },
+  { id: "contrib-007", challengeId: "ch-004", name: "Aditi Sinha", role: "Student" as const, organization: "Ranchi University", contribution: "Prototyped the solar-powered cold storage controller.", stars: 27 },
+  { id: "contrib-008", challengeId: "ch-005", name: "NIT Jamshedpur Mobility Lab", role: "University" as const, organization: "National Institute of Technology, Jamshedpur", contribution: "Audited bus routes and designed an accessible retrofit plan.", stars: 33 },
+  { id: "contrib-009", challengeId: "ch-006", name: "Dr. Vivek Tirkey", role: "Teacher" as const, organization: "Nilamber Pitamber University", contribution: "Reviewed groundwater data and trained field survey teams.", stars: 21 },
+  { id: "contrib-010", challengeId: "ch-007", name: "Chas Green Campus Team", role: "Student" as const, organization: "Birla Institute of Technology, Mesra", contribution: "Tested neighbourhood composting workflows with residents.", stars: 39 },
+  { id: "contrib-011", challengeId: "ch-008", name: "Simdega Health Research Group", role: "University" as const, organization: "Sido Kanhu Murmu University", contribution: "Co-designed the low-bandwidth telemedicine kiosk with health workers.", stars: 35 },
+  { id: "contrib-012", challengeId: "ch-009", name: "Karan Oraon", role: "Student" as const, organization: "Vinoba Bhave University", contribution: "Modelled battery sizing for remote household clusters.", stars: 26 },
+  { id: "contrib-013", challengeId: "ch-010", name: "Prof. Shalini Verma", role: "Teacher" as const, organization: "Vinoba Bhave University", contribution: "Mapped citizen grievance journeys with the collectorate.", stars: 19 },
+  { id: "contrib-014", challengeId: "ch-011", name: "NIT Jamshedpur Skills Cell", role: "University" as const, organization: "National Institute of Technology, Jamshedpur", contribution: "Matched local apprenticeships to youth skill profiles.", stars: 30 },
+  { id: "contrib-015", challengeId: "ch-012", name: "Sakshi Kumari", role: "Student" as const, organization: "Sido Kanhu Murmu University", contribution: "Collected flood impact stories and road access data.", stars: 23 },
+  { id: "contrib-016", challengeId: "ch-013", name: "Dr. Pooja Ekka", role: "Teacher" as const, organization: "Ranchi University", contribution: "Helped schools evaluate safe disposal and menstrual health needs.", stars: 28 },
+  { id: "contrib-017", challengeId: "ch-014", name: "BIT Rural Infrastructure Lab", role: "University" as const, organization: "Birla Institute of Technology, Mesra", contribution: "Tested a low-cost monitoring approach with village volunteers.", stars: 22 },
+  { id: "contrib-018", challengeId: "ch-015", name: "Anjali Bara", role: "Student" as const, organization: "Usha Martin University", contribution: "Created the first user interviews and service prototype.", stars: 25 },
+];

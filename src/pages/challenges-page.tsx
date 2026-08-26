@@ -58,6 +58,11 @@ export function ChallengesPage() {
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
       <SectionHeading eyebrow="Challenge Explorer" title="Browse societal problems across Jharkhand" description="Search, filter and find the challenges your team, lab or startup is best placed to solve." />
 
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-jic-forest/15 bg-jic-forest-light/50 px-4 py-3 text-sm">
+        <p className="text-jic-charcoal"><span className="font-semibold">New here?</span> Pick a district on the map, then open any challenge to see its progress and contributors.</p>
+        <span className="text-xs font-medium text-jic-forest">No account needed to explore</span>
+      </div>
+
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

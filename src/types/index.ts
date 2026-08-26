@@ -55,6 +55,16 @@ export interface Challenge {
   matchScore?: number;
 }
 
+export interface ChallengeContribution {
+  id: string;
+  challengeId: string;
+  name: string;
+  role: "Student" | "Teacher" | "University";
+  organization: string;
+  contribution: string;
+  stars: number;
+}
+
 export interface AIAnalysis {
   domain: Domain;
   priority: Priority;
