@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { ChallengeCard } from "@/components/shared/challenge-card";
-import { CHALLENGES, DISTRICT_NAMES, DOMAINS } from "@/data/demoData";
+import { OfflineJharkhandMap } from "@/components/shared/offline-jharkhand-map";
+import { CHALLENGES, DISTRICTS, DISTRICT_NAMES, DOMAINS } from "@/data/demoData";
 import type { ChallengeStatus, Priority } from "@/types";
 
 const STATUSES: ChallengeStatus[] = [
@@ -97,6 +98,10 @@ export function ChallengesPage() {
         Showing <span className="font-semibold text-jic-charcoal">{Math.min(paged.length, filtered.length)}</span> of{" "}
         {filtered.length} challenges
       </p>
+
+      <div className="mt-8">
+        <OfflineJharkhandMap districts={DISTRICTS} challenges={CHALLENGES} />
+      </div>
 
       {filtered.length === 0 ? (
         <div className="mt-10 flex flex-col items-center rounded-2xl border border-dashed border-border py-20 text-center">
