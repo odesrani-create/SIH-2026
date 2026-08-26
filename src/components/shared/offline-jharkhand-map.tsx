@@ -1,29 +1,29 @@
 import { useMemo, useState } from "react";
-import { MapPin, Radio, WifiOff } from "lucide-react";
+import { ExternalLink, MapPin, Radio, WifiOff } from "lucide-react";
 import type { Challenge, District } from "@/types";
 
 interface DistrictPoint {
   name: string;
   x: number;
   y: number;
+  latitude: number;
+  longitude: number;
 }
 
 const DISTRICT_POINTS: DistrictPoint[] = [
-  { name: "Palamu", x: 18, y: 30 },
-  { name: "Gumla", x: 27, y: 56 },
-  { name: "Simdega", x: 37, y: 78 },
-  { name: "Ranchi", x: 47, y: 51 },
-  { name: "Hazaribagh", x: 52, y: 29 },
-  { name: "Giridih", x: 70, y: 30 },
-  { name: "Dhanbad", x: 78, y: 45 },
-  { name: "Bokaro", x: 64, y: 49 },
-  { name: "Jamshedpur", x: 66, y: 72 },
-  { name: "Chaibasa", x: 49, y: 76 },
-  { name: "Dumka", x: 84, y: 25 },
-  { name: "Deoghar", x: 88, y: 42 },
+  { name: "Palamu", x: 18, y: 30, latitude: 24.03, longitude: 84.07 },
+  { name: "Gumla", x: 27, y: 56, latitude: 23.04, longitude: 84.54 },
+  { name: "Simdega", x: 37, y: 78, latitude: 22.62, longitude: 84.51 },
+  { name: "Ranchi", x: 47, y: 51, latitude: 23.34, longitude: 85.31 },
+  { name: "Hazaribagh", x: 52, y: 29, latitude: 23.99, longitude: 85.36 },
+  { name: "Giridih", x: 70, y: 30, latitude: 24.19, longitude: 86.30 },
+  { name: "Dhanbad", x: 78, y: 45, latitude: 23.80, longitude: 86.43 },
+  { name: "Bokaro", x: 64, y: 49, latitude: 23.67, longitude: 86.15 },
+  { name: "Jamshedpur", x: 66, y: 72, latitude: 22.80, longitude: 86.20 },
+  { name: "Chaibasa", x: 49, y: 76, latitude: 22.56, longitude: 85.80 },
+  { name: "Dumka", x: 84, y: 25, latitude: 24.27, longitude: 87.25 },
+  { name: "Deoghar", x: 88, y: 42, latitude: 24.48, longitude: 86.70 },
 ];
-
-const STATE_OUTLINE = "M18 17 L36 8 L58 10 L80 5 L94 19 L91 37 L98 52 L86 66 L75 83 L55 91 L38 86 L26 93 L12 76 L5 57 L10 39 Z";
 
 export function OfflineJharkhandMap({ districts, challenges }: { districts: District[]; challenges: Challenge[] }) {
   const [selectedDistrict, setSelectedDistrict] = useState("Ranchi");
@@ -32,7 +32,8 @@ export function OfflineJharkhandMap({ districts, challenges }: { districts: Dist
     () => challenges.filter((challenge) => challenge.district === selectedDistrict),
     [challenges, selectedDistrict]
   );
-  const maxChallenges = Math.max(...districts.map((district) => district.challenges));
+    const selectedPoint = DISTRICT_POINTS.find((point) => point.name === selectedDistrict) ?? DISTRICT_POINTS[3];
+    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=83.2%2C21.8%2C87.9%2C25.5&layer=mapnik&marker=${selectedPoint.latitude}%2C${selectedPoint.longitude}`;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-jic-forest/20 bg-[#f4f1e5]">
@@ -44,42 +45,30 @@ export function OfflineJharkhandMap({ districts, challenges }: { districts: Dist
           </div>
           <p className="mt-1 text-xs text-muted-foreground">District-level view of reported problems across Jharkhand</p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-jic-forest-light px-3 py-1.5 text-xs font-semibold text-jic-forest">
-          <WifiOff className="h-3.5 w-3.5" /> Offline map data
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-jic-forest-light px-3 py-1.5 text-xs font-semibold text-jic-forest">
+            <WifiOff className="h-3.5 w-3.5" /> Local problem data
+          </span>
+          <a href="https://organicmaps.app/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-jic-deep px-3 py-1.5 text-xs font-semibold text-jic-cream hover:bg-jic-forest">
+            Open in Organic Maps <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-[1.35fr_0.65fr]">
         <div className="relative min-h-[390px] p-3 sm:p-6">
-          <svg viewBox="0 0 100 100" className="h-full min-h-[360px] w-full" role="img" aria-label="Offline map of Jharkhand districts">
-            <path d={STATE_OUTLINE} fill="#dbe8d4" stroke="#2d6a4f" strokeWidth="0.8" strokeLinejoin="round" />
-            <path d="M15 55 C35 44 57 55 88 38 M28 18 C42 36 43 63 38 86 M59 10 C57 34 68 55 73 82" fill="none" stroke="#a9c5a5" strokeWidth="0.45" strokeDasharray="2 2" />
-            {DISTRICT_POINTS.map((point) => {
-              const district = districts.find((item) => item.name === point.name);
-              if (!district) return null;
-              const active = point.name === selectedDistrict;
-              const size = 2.3 + (district.challenges / maxChallenges) * 2.5;
-              return (
-                <g key={point.name} className="cursor-pointer" onClick={() => setSelectedDistrict(point.name)}>
-                  {active && <circle cx={point.x} cy={point.y} r={size + 2} fill="#e0a72e" opacity="0.25" />}
-                  <circle cx={point.x} cy={point.y} r={size} fill={active ? "#e0a72e" : "#2d6a4f"} stroke="#fff" strokeWidth="0.8" />
-                  <text x={point.x} y={point.y - size - 1.5} textAnchor="middle" fontSize="3.2" fontWeight={active ? "700" : "500"} fill="#232323">
-                    {point.name}
-                  </text>
-                  <title>{`${point.name}: ${district.challenges} reported problems`}</title>
-                </g>
-              );
-            })}
-          </svg>
-          <div className="absolute bottom-5 left-6 flex items-center gap-3 rounded-lg border border-jic-forest/15 bg-white/85 px-3 py-2 text-[11px] text-muted-foreground backdrop-blur-sm">
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-jic-forest" /> Reported problems</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-jic-saffron" /> Selected district</span>
+          <iframe title="Live map of Jharkhand" src={mapUrl} className="h-[360px] w-full rounded-xl border border-jic-forest/20 bg-white" loading="lazy" />
+          <div className="pointer-events-none absolute bottom-5 left-6 rounded-lg border border-jic-forest/15 bg-white/90 px-3 py-2 text-[11px] text-muted-foreground shadow-sm">
+            Live map · marker shows {selectedDistrict}
           </div>
         </div>
 
         <div className="border-t border-jic-forest/15 bg-white/65 p-5 lg:border-l lg:border-t-0">
           <p className="text-xs font-bold uppercase tracking-wide text-jic-forest">Selected district</p>
-          <h4 className="mt-1 font-display text-2xl font-semibold text-jic-charcoal">{selected?.name}</h4>
+          <label htmlFor="map-district" className="sr-only">Choose a district</label>
+          <select id="map-district" value={selectedDistrict} onChange={(event) => setSelectedDistrict(event.target.value)} className="mt-2 h-10 w-full rounded-lg border border-border bg-white px-3 text-sm font-semibold text-jic-charcoal outline-none focus:ring-2 focus:ring-jic-forest/30">
+            {districts.map((district) => <option key={district.name} value={district.name}>{district.name}</option>)}
+          </select>
           <div className="mt-4 grid grid-cols-2 gap-2">
             <Metric label="Reported" value={selected?.challenges ?? 0} />
             <Metric label="Live projects" value={selected?.activeProjects ?? 0} />
