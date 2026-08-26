@@ -27,10 +27,12 @@ import {
 import { DashboardShell } from "@/components/shared/dashboard-shell";
 import type { DashboardNavItem } from "@/components/shared/dashboard-shell";
 import { StatCard } from "@/components/shared/section-heading";
+import { OfflineJharkhandMap } from "@/components/shared/offline-jharkhand-map";
 import { Button } from "@/components/ui/button";
 import {
   STATE_STATS,
   CHALLENGES_BY_DOMAIN,
+  CHALLENGES,
   PROJECT_PIPELINE,
   INDUSTRY_ENGAGEMENT,
   DISTRICTS,
@@ -160,7 +162,10 @@ export function GovernmentDashboardPage() {
 
       {tab === "districts" && (
         <div>
-          <SectionTitle title="Districts" description="Click a district in the map view for full drill-down." />
+          <SectionTitle title="Districts" description="Select a district to locate reported problems and inspect local activity." />
+          <div className="mt-5">
+            <OfflineJharkhandMap districts={DISTRICTS} challenges={CHALLENGES} />
+          </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {DISTRICTS.map((d) => (
               <div key={d.name} className="rounded-2xl border border-border bg-card p-4">
