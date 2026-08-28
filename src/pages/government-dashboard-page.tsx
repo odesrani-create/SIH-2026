@@ -40,7 +40,7 @@ import {
 } from "@/data/demoData";
 import { useAppState } from "@/lib/app-state";
 
-const CHART_COLORS = ["#123524", "#2d6a4f", "#e0a72e", "#c97c5d", "#7c9c8e", "#3a6351", "#96774f", "#b98d51"];
+const CHART_COLORS = ["#3a3f5c", "#5b6485", "#b8825a", "#a85c5c", "#9098b0", "#6b7392", "#c99a52", "#8a5a3d"];
 
 const NAV_ITEMS: DashboardNavItem[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -60,8 +60,8 @@ export function GovernmentDashboardPage() {
 
   return (
     <DashboardShell
-      title="Jharkhand Innovation Connect — State Dashboard"
-      subtitle="Department of IT & e-Governance, Government of Jharkhand"
+      title="State Dashboard"
+      subtitle="Department of IT & e-Governance, Government of Jharkhand · Jharkhand Innovation Connect"
       navItems={NAV_ITEMS}
       activeId={tab}
       onSelect={setTab}
@@ -105,7 +105,7 @@ export function GovernmentDashboardPage() {
                     {PROJECT_PIPELINE.map((_, i) => (
                       <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                     ))}
-                    <LabelList position="right" dataKey="stage" fill="#232323" stroke="none" fontSize={12} />
+                    <LabelList position="right" dataKey="stage" fill="hsl(222 32% 20%)" stroke="none" fontSize={12} />
                   </Funnel>
                 </FunnelChart>
               </ResponsiveContainer>
@@ -118,7 +118,7 @@ export function GovernmentDashboardPage() {
                   <XAxis type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={90} axisLine={false} tickLine={false} />
                   <Tooltip />
-                  <Bar dataKey="challenges" fill="#2d6a4f" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="challenges" fill="#5b6485" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -130,7 +130,7 @@ export function GovernmentDashboardPage() {
                   <XAxis dataKey="type" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#e0a72e" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="value" fill="#b8825a" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </ChartCard>

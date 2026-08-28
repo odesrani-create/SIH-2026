@@ -110,9 +110,14 @@ export function SubmitChallengePage() {
     return <SuccessScreen trackingId={trackingId} analysis={analysis} title={form.title} onDone={() => goTo("track")} onLanding={() => goTo("landing")} />;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
-      <SectionHeading eyebrow="Submit a Challenge" title="Tell us about the problem in your community" description="It takes about 3 minutes. Our AI will analyse it right after you submit." />
-
+    <div>
+      <div className="relative overflow-hidden border-b border-border bg-jic-forest-light/30">
+        <div className="absolute inset-0 bg-grid-texture opacity-[0.25]" />
+        <div className="relative mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
+          <SectionHeading eyebrow="Submit a Challenge" title="Tell us about the problem in your community" description="It takes about 3 minutes. Our AI will analyse it right after you submit." />
+        </div>
+      </div>
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Stepper */}
       <div className="mt-8 flex items-center justify-between">
         {STEPS.map((label, i) => (
@@ -165,6 +170,7 @@ export function SubmitChallengePage() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

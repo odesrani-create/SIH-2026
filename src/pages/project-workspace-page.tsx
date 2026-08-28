@@ -15,25 +15,30 @@ export function ProjectWorkspacePage() {
   const activeStageIndex = Math.min(Math.floor((project.progress / 100) * PIPELINE.length), PIPELINE.length - 1);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <button onClick={() => goTo("university-dashboard")} className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-jic-forest">
-        <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-      </button>
+    <div>
+      <div className="border-b border-border bg-jic-forest-light/30 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <button onClick={() => goTo("university-dashboard")} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-jic-forest">
+            <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+          </button>
 
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-jic-forest">Project · {project.district}</p>
-          <h1 className="mt-1 font-display text-2xl font-semibold text-jic-charcoal sm:text-3xl">{project.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{project.university}</p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card px-5 py-3 text-center">
-          <p className="text-xs font-medium text-muted-foreground">Status</p>
-          <p className="mt-0.5 text-sm font-semibold text-jic-forest">{project.status}</p>
+          <div className="mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-jic-forest">Project · {project.district}</p>
+              <h1 className="mt-1 font-display text-2xl font-semibold text-jic-charcoal sm:text-3xl">{project.title}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{project.university}</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card px-5 py-3 text-center shadow-elevation-xs">
+              <p className="text-xs font-medium text-muted-foreground">Status</p>
+              <p className="mt-0.5 text-sm font-semibold text-jic-forest">{project.status}</p>
+            </div>
+          </div>
         </div>
       </div>
 
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Progress */}
-      <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-jic-charcoal">Overall Progress</span>
           <span className="font-semibold text-jic-forest">{project.progress}%</span>
@@ -44,7 +49,7 @@ export function ProjectWorkspacePage() {
       </div>
 
       {/* Pipeline timeline */}
-      <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+      <div className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
         <p className="text-sm font-semibold text-jic-charcoal">Timeline</p>
         <div className="mt-4 flex flex-wrap items-center gap-1">
           {PIPELINE.map((stage, i) => (
@@ -65,7 +70,7 @@ export function ProjectWorkspacePage() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Milestones */}
-        <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
           <p className="text-sm font-semibold text-jic-charcoal">Milestones</p>
           <div className="mt-4 space-y-3">
             {project.milestones.map((m) => (
@@ -96,7 +101,7 @@ export function ProjectWorkspacePage() {
 
         {/* Team & industry */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
             <div className="flex items-center gap-2">
               <Users2 className="h-4 w-4 text-jic-forest" />
               <p className="text-sm font-semibold text-jic-charcoal">Team</p>
@@ -110,7 +115,7 @@ export function ProjectWorkspacePage() {
               ))}
             </div>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
             <div className="flex items-center gap-2">
               <Building2 className="h-4 w-4 text-jic-forest" />
               <p className="text-sm font-semibold text-jic-charcoal">Industry Partners</p>
@@ -132,7 +137,7 @@ export function ProjectWorkspacePage() {
       </div>
 
       {/* Documents */}
-      <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+      <div className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold text-jic-charcoal">Documents</p>
           <Button
@@ -154,6 +159,7 @@ export function ProjectWorkspacePage() {
             </div>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );

@@ -27,23 +27,28 @@ export function UniversityWorkspacePage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <button
-        onClick={() => goTo("university-dashboard")}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-jic-forest"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-      </button>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <StatusBadge status={challenge.status} />
-        <PriorityBadge priority={challenge.priority} />
+    <div>
+      <div className="border-b border-border bg-jic-forest-light/30 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <button
+            onClick={() => goTo("university-dashboard")}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-jic-forest"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+          </button>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <StatusBadge status={challenge.status} />
+            <PriorityBadge priority={challenge.priority} />
+          </div>
+          <h1 className="mt-3 font-display text-2xl font-semibold text-jic-charcoal sm:text-3xl">{challenge.title}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{challenge.description}</p>
+        </div>
       </div>
-      <h1 className="mt-3 font-display text-2xl font-semibold text-jic-charcoal sm:text-3xl">{challenge.title}</h1>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{challenge.description}</p>
+
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-jic-forest/20 bg-jic-forest-light/40 p-5">
+        <div className="rounded-2xl border border-jic-forest/20 bg-jic-forest-light/40 p-5 shadow-elevation-sm">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-jic-forest" />
             <p className="font-display text-base font-semibold text-jic-charcoal">AI Recommendations</p>
@@ -55,7 +60,7 @@ export function UniversityWorkspacePage() {
             <li>• Plan a 6-8 week field testing window before the village pilot</li>
           </ul>
         </div>
-        <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
           <p className="font-display text-base font-semibold text-jic-charcoal">Required Disciplines</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {REQUIRED_DISCIPLINES.map((d) => (
@@ -73,7 +78,7 @@ export function UniversityWorkspacePage() {
         </div>
       </div>
 
-      <div className="mt-10 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-elevation-sm">
         <div className="flex items-center gap-2">
           <Users2 className="h-5 w-5 text-jic-forest" />
           <p className="font-display text-lg font-semibold text-jic-charcoal">Team Builder</p>
@@ -136,6 +141,7 @@ export function UniversityWorkspacePage() {
             </Button>
           </>
         )}
+      </div>
       </div>
     </div>
   );

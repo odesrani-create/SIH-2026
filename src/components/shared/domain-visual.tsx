@@ -57,7 +57,9 @@ export function DomainVisual({ domain, className }: { domain: Domain; className?
       )}
     >
       <div className="absolute inset-0 opacity-[0.15] [background-image:radial-gradient(circle_at_2px_2px,white_1px,transparent_0)] [background-size:16px_16px]" />
-      <Icon className="h-10 w-10 text-white/90" strokeWidth={1.5} />
+      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+      <div className="absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-black/10 blur-2xl" />
+      <Icon className="relative h-10 w-10 text-white/90" strokeWidth={1.5} />
     </div>
   );
 }

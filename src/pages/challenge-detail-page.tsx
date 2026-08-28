@@ -67,192 +67,202 @@ export function ChallengeDetailPage() {
   }, [challenge.id]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <button
-        onClick={() => goTo("challenges")}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-jic-forest"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to Challenges
-      </button>
+    <div>
+      <div className="relative">
+        <DomainVisual domain={challenge.domain} className="h-56 w-full sm:h-72" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/10" />
+        <div className="absolute inset-x-0 top-0 mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+          <button
+            onClick={() => goTo("challenges")}
+            className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3.5 py-2 text-sm font-medium text-jic-charcoal shadow-elevation-sm backdrop-blur transition-colors hover:bg-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Challenges
+          </button>
+        </div>
+      </div>
 
-      <DomainVisual domain={challenge.domain} className="h-52 w-full rounded-3xl sm:h-64" />
-
-      <div className="mt-6 grid gap-10 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge status={challenge.status} />
-            <PriorityBadge priority={challenge.priority} />
-            <DomainTag domain={challenge.domain} />
-          </div>
-          <h1 className="mt-4 font-display text-3xl font-semibold leading-tight text-jic-charcoal sm:text-4xl">
-            {challenge.title}
-          </h1>
-          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-4 w-4" /> {challenge.village ? `${challenge.village}, ` : ""}
-              {challenge.block ? `${challenge.block}, ` : ""}
-              {challenge.district}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" /> Submitted {formatDate(challenge.submittedDate)}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Users className="h-4 w-4" /> {challenge.affectedPopulation.toLocaleString("en-IN")}+ affected
-            </span>
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Tracking ID: <span className="font-mono font-medium text-jic-charcoal">{challenge.trackingId}</span> · Submitted by{" "}
-            {challenge.submittedBy}
-          </p>
-
-          <div className="mt-8 space-y-6">
-            <DetailBlock icon={FileText} title="Problem Description" text={challenge.description} />
-            <DetailBlock icon={Layers} title="Current Situation" text={challenge.currentSituation} />
-            <DetailBlock icon={Target} title="Desired Outcome" text={challenge.desiredOutcome} />
-          </div>
-
-          <div className="mt-8">
-            <p className="mb-2 text-sm font-semibold text-jic-charcoal">Tags</p>
-            <div className="flex flex-wrap gap-2">
-              {challenge.tags.map((t) => (
-                <span key={t} className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                  {t}
-                </span>
-              ))}
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusBadge status={challenge.status} />
+              <PriorityBadge priority={challenge.priority} />
+              <DomainTag domain={challenge.domain} />
             </div>
-          </div>
-
-          <div className="mt-8">
-            <p className="mb-2 text-sm font-semibold text-jic-charcoal">Supporting Documents</p>
-            <div className="flex flex-wrap gap-2">
-              {["Site_Photos.zip", "Community_Survey.pdf", "Location_Map.png"].map((doc) => (
-                <span key={doc} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground">
-                  <FileText className="h-3.5 w-3.5" /> {doc}
-                </span>
-              ))}
+            <h1 className="mt-4 text-balance font-display text-3xl font-semibold leading-tight text-jic-charcoal sm:text-4xl">
+              {challenge.title}
+            </h1>
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" /> {challenge.village ? `${challenge.village}, ` : ""}
+                {challenge.block ? `${challenge.block}, ` : ""}
+                {challenge.district}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar className="h-4 w-4" /> Submitted {formatDate(challenge.submittedDate)}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Users className="h-4 w-4" /> {challenge.affectedPopulation.toLocaleString("en-IN")}+ affected
+              </span>
             </div>
-          </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Tracking ID: <span className="font-mono font-medium text-jic-charcoal">{challenge.trackingId}</span> · Submitted by{" "}
+              {challenge.submittedBy}
+            </p>
 
-          <section className="mt-10 rounded-2xl border border-jic-saffron/35 bg-jic-saffron-light/45 p-5 sm:p-6">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-jic-earth">People behind the progress</p>
-                <h2 className="mt-1 font-display text-xl font-semibold text-jic-charcoal">Recognise the contributors</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Students, teachers and universities are turning this report into action.</p>
+            <div className="mt-8 space-y-6 rounded-2xl border border-border bg-card p-6 shadow-elevation-sm">
+              <DetailBlock icon={FileText} title="Problem Description" text={challenge.description} />
+              <DetailBlock icon={Layers} title="Current Situation" text={challenge.currentSituation} />
+              <DetailBlock icon={Target} title="Desired Outcome" text={challenge.desiredOutcome} />
+            </div>
+
+            <div className="mt-8">
+              <p className="mb-2 text-sm font-semibold text-jic-charcoal">Tags</p>
+              <div className="flex flex-wrap gap-2">
+                {challenge.tags.map((t) => (
+                  <span key={t} className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                    {t}
+                  </span>
+                ))}
               </div>
-              <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-jic-earth">{contributions.length} contributors</span>
             </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {contributions.length > 0 ? contributions.map((person) => {
-                const hasAppreciated = appreciated.includes(person.id);
-                return (
-                  <div key={person.id} className="rounded-xl border border-white/80 bg-white/80 p-4">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-jic-deep text-jic-saffron">
-                        {person.role === "Student" ? <GraduationCap className="h-4 w-4" /> : person.role === "Teacher" ? <School className="h-4 w-4" /> : <Building2 className="h-4 w-4" />}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-sm font-semibold text-jic-charcoal">{person.name}</p>
-                          <span className="rounded-full bg-jic-forest-light px-2 py-0.5 text-[10px] font-bold text-jic-forest">{person.role}</span>
+
+            <div className="mt-8">
+              <p className="mb-2 text-sm font-semibold text-jic-charcoal">Supporting Documents</p>
+              <div className="flex flex-wrap gap-2">
+                {["Site_Photos.zip", "Community_Survey.pdf", "Location_Map.png"].map((doc) => (
+                  <span key={doc} className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-xs text-muted-foreground shadow-elevation-xs">
+                    <FileText className="h-3.5 w-3.5" /> {doc}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <section className="mt-10 rounded-2xl border border-jic-saffron/35 bg-jic-saffron-light/45 p-5 sm:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wide text-jic-earth">People behind the progress</p>
+                  <h2 className="mt-1 font-display text-xl font-semibold text-jic-charcoal">Recognise the contributors</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Students, teachers and universities are turning this report into action.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-jic-earth shadow-elevation-xs">{contributions.length} contributors</span>
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {contributions.length > 0 ? (
+                  contributions.map((person) => {
+                    const hasAppreciated = appreciated.includes(person.id);
+                    return (
+                      <div key={person.id} className="rounded-xl border border-white/80 bg-white/85 p-4 shadow-elevation-xs">
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-jic-deep text-jic-saffron">
+                            {person.role === "Student" ? <GraduationCap className="h-4 w-4" /> : person.role === "Teacher" ? <School className="h-4 w-4" /> : <Building2 className="h-4 w-4" />}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-sm font-semibold text-jic-charcoal">{person.name}</p>
+                              <span className="rounded-full bg-jic-forest-light px-2 py-0.5 text-[10px] font-bold text-jic-forest">{person.role}</span>
+                            </div>
+                            <p className="mt-0.5 text-[11px] text-muted-foreground">{person.organization}</p>
+                            <p className="mt-2 text-xs leading-relaxed text-jic-charcoal/75">{person.contribution}</p>
+                            <button
+                              type="button"
+                              aria-pressed={hasAppreciated}
+                              onClick={() => appreciate(person.id)}
+                              className={`mt-3 inline-flex items-center gap-1.5 text-xs font-semibold transition-colors ${hasAppreciated ? "text-jic-earth" : "text-muted-foreground hover:text-jic-earth"}`}
+                            >
+                              <Star className={`h-3.5 w-3.5 ${hasAppreciated ? "fill-jic-saffron text-jic-earth" : ""}`} />
+                              {person.stars + (hasAppreciated ? 1 : 0)} appreciation stars
+                            </button>
+                          </div>
                         </div>
-                        <p className="mt-0.5 text-[11px] text-muted-foreground">{person.organization}</p>
-                        <p className="mt-2 text-xs leading-relaxed text-jic-charcoal/75">{person.contribution}</p>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-sm text-muted-foreground">Contributor updates will appear as teams begin work on this challenge.</p>
+                )}
+              </div>
+            </section>
+
+            {user?.role === "university" || user?.role === "faculty" ? (
+              <Button
+                className="mt-10 bg-jic-deep text-jic-cream hover:bg-jic-deep/90"
+                onClick={() => goTo("university-workspace", { id: challenge.id })}
+              >
+                Open in University Workspace
+              </Button>
+            ) : null}
+          </div>
+
+          {/* Sidebar: AI analysis + institutions */}
+          <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+            <div className="overflow-hidden rounded-2xl border border-jic-forest/20 bg-jic-forest-light/40 p-5 shadow-elevation-sm">
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-jic-deep text-jic-saffron">
+                  <Sparkles className="h-4 w-4" />
+                </span>
+                <p className="font-display text-base font-semibold text-jic-charcoal">AI Analysis</p>
+              </div>
+              {loading || !analysis ? (
+                <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Analyzing problem…
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3 text-sm">
+                  <Row label="Category" value={analysis.domain} />
+                  <Row label="Priority" value={analysis.priority} />
+                  <Row label="Estimated Impact" value={`${analysis.impactScore.toFixed(1)} / 5`} />
+                  <Row label="Duplicate Risk" value={analysis.duplicateRisk} />
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Related Domains</p>
+                    <p className="mt-1 text-jic-charcoal">{analysis.relatedDomains.join(" · ")}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Potential Skills</p>
+                    <p className="mt-1 text-jic-charcoal">{analysis.potentialSkills.join(", ")}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Suggested Technologies</p>
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {analysis.suggestedTechnologies.map((t) => (
+                        <span key={t} className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-jic-forest shadow-elevation-xs">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-elevation-sm">
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-jic-forest" />
+                <p className="font-display text-base font-semibold text-jic-charcoal">Recommended Institutions</p>
+              </div>
+              <div className="mt-4 space-y-3">
+                {loading
+                  ? Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="h-20 animate-pulse rounded-xl bg-muted" />
+                    ))
+                  : institutions.map((u) => (
+                      <div key={u.id} className="rounded-xl border border-border p-3.5 transition-colors hover:border-jic-forest/30">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm font-semibold leading-snug text-jic-charcoal">{u.name}</p>
+                          <span className="shrink-0 rounded-full bg-jic-forest-light px-2 py-0.5 text-xs font-bold text-jic-forest">
+                            {u.matchScore}% Match
+                          </span>
+                        </div>
+                        <p className="mt-1.5 text-xs text-muted-foreground">{u.expertise.slice(0, 3).join(" · ")}</p>
                         <button
-                          type="button"
-                          aria-pressed={hasAppreciated}
-                          onClick={() => appreciate(person.id)}
-                          className={`mt-3 inline-flex items-center gap-1.5 text-xs font-semibold ${hasAppreciated ? "text-jic-earth" : "text-muted-foreground hover:text-jic-earth"}`}
+                          onClick={() => goTo("university-dashboard")}
+                          className="mt-2 text-xs font-semibold text-jic-forest hover:underline"
                         >
-                          <Star className={`h-3.5 w-3.5 ${hasAppreciated ? "fill-jic-saffron text-jic-earth" : ""}`} />
-                          {person.stars + (hasAppreciated ? 1 : 0)} appreciation stars
+                          View Institution
                         </button>
                       </div>
-                    </div>
-                  </div>
-                );
-              }) : <p className="text-sm text-muted-foreground">Contributor updates will appear as teams begin work on this challenge.</p>}
-            </div>
-          </section>
-
-          {user?.role === "university" || user?.role === "faculty" ? (
-            <Button
-              className="mt-10 bg-jic-deep text-jic-cream hover:bg-jic-deep/90"
-              onClick={() => goTo("university-workspace", { id: challenge.id })}
-            >
-              Open in University Workspace
-            </Button>
-          ) : null}
-        </div>
-
-        {/* Sidebar: AI analysis + institutions */}
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-jic-forest/20 bg-jic-forest-light/40 p-5">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-jic-deep text-jic-saffron">
-                <Sparkles className="h-4 w-4" />
-              </span>
-              <p className="font-display text-base font-semibold text-jic-charcoal">AI Analysis</p>
-            </div>
-            {loading || !analysis ? (
-              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" /> Analyzing problem…
-              </div>
-            ) : (
-              <div className="mt-4 space-y-3 text-sm">
-                <Row label="Category" value={analysis.domain} />
-                <Row label="Priority" value={analysis.priority} />
-                <Row label="Estimated Impact" value={`${analysis.impactScore.toFixed(1)} / 5`} />
-                <Row label="Duplicate Risk" value={analysis.duplicateRisk} />
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">Related Domains</p>
-                  <p className="mt-1 text-jic-charcoal">{analysis.relatedDomains.join(" · ")}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">Potential Skills</p>
-                  <p className="mt-1 text-jic-charcoal">{analysis.potentialSkills.join(", ")}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">Suggested Technologies</p>
-                  <div className="mt-1.5 flex flex-wrap gap-1.5">
-                    {analysis.suggestedTechnologies.map((t) => (
-                      <span key={t} className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-jic-forest">
-                        {t}
-                      </span>
                     ))}
-                  </div>
-                </div>
               </div>
-            )}
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-jic-forest" />
-              <p className="font-display text-base font-semibold text-jic-charcoal">Recommended Institutions</p>
-            </div>
-            <div className="mt-4 space-y-3">
-              {loading
-                ? Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-20 animate-pulse rounded-xl bg-muted" />
-                  ))
-                : institutions.map((u) => (
-                    <div key={u.id} className="rounded-xl border border-border p-3.5">
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-semibold leading-snug text-jic-charcoal">{u.name}</p>
-                        <span className="shrink-0 rounded-full bg-jic-forest-light px-2 py-0.5 text-xs font-bold text-jic-forest">
-                          {u.matchScore}% Match
-                        </span>
-                      </div>
-                      <p className="mt-1.5 text-xs text-muted-foreground">{u.expertise.slice(0, 3).join(" · ")}</p>
-                      <button
-                        onClick={() => goTo("university-dashboard")}
-                        className="mt-2 text-xs font-semibold text-jic-forest hover:underline"
-                      >
-                        View Institution
-                      </button>
-                    </div>
-                  ))}
             </div>
           </div>
         </div>

@@ -24,11 +24,11 @@ export function NotificationDropdown() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label="Notifications"
-        className="relative flex h-9 w-9 items-center justify-center rounded-full text-jic-charcoal hover:bg-jic-forest-light"
+        className="relative flex h-9 w-9 items-center justify-center rounded-full text-jic-charcoal transition-colors hover:bg-jic-forest-light"
       >
         <Bell className="h-5 w-5" />
         {unread > 0 && (
-          <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-jic-saffron text-[10px] font-bold text-jic-deep">
+          <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-jic-saffron text-[10px] font-bold text-jic-deep shadow-elevation-xs">
             {unread}
           </span>
         )}
@@ -36,12 +36,12 @@ export function NotificationDropdown() {
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-11 z-40 w-80 rounded-xl border border-border bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="absolute right-0 top-11 z-40 w-80 animate-fade-up overflow-hidden rounded-2xl border border-border bg-white shadow-elevation-lg">
+            <div className="flex items-center justify-between border-b border-border bg-jic-forest-light/40 px-4 py-3">
               <p className="text-sm font-semibold text-jic-charcoal">Notifications</p>
               <button
                 onClick={() => setItems((prev) => prev.map((n) => ({ ...n, read: true })))}
-                className="text-xs font-medium text-jic-forest hover:underline"
+                className="text-xs font-semibold text-jic-forest hover:underline"
               >
                 Mark all read
               </button>
@@ -54,8 +54,8 @@ export function NotificationDropdown() {
                     key={n.id}
                     onClick={() => setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
                     className={cn(
-                      "flex w-full items-start gap-3 border-b border-border/60 px-4 py-3 text-left last:border-0 hover:bg-jic-forest-light/50",
-                      !n.read && "bg-jic-forest-light/30"
+                      "flex w-full items-start gap-3 border-b border-border/60 px-4 py-3 text-left transition-colors last:border-0 hover:bg-jic-forest-light/50",
+                      !n.read && "bg-jic-saffron-light/25"
                     )}
                   >
                     <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-jic-forest-light text-jic-forest">

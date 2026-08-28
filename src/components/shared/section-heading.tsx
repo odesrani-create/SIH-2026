@@ -20,24 +20,23 @@ export function SectionHeading({
       {eyebrow && (
         <span
           className={cn(
-            "mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em]",
+            "eyebrow-mono mb-3 inline-flex items-center gap-2 uppercase",
             light ? "text-jic-saffron" : "text-jic-forest"
           )}
         >
-          <span className={cn("h-px w-6", light ? "bg-jic-saffron" : "bg-jic-forest")} />
           {eyebrow}
         </span>
       )}
       <h2
         className={cn(
-          "font-display text-3xl font-semibold leading-tight sm:text-4xl",
+          "text-balance font-display text-3xl font-semibold leading-[1.08] tracking-tight sm:text-4xl",
           light ? "text-white" : "text-jic-charcoal"
         )}
       >
         {title}
       </h2>
       {description && (
-        <p className={cn("mt-3 text-base leading-relaxed", light ? "text-white/75" : "text-muted-foreground")}>
+        <p className={cn("mt-3.5 text-balance text-base leading-relaxed", light ? "text-white/75" : "text-muted-foreground")}>
           {description}
         </p>
       )}
@@ -61,8 +60,10 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border p-5",
-        tone === "dark" ? "border-white/10 bg-white/[0.06] backdrop-blur" : "border-border bg-card shadow-sm"
+        "group relative overflow-hidden rounded-xl border p-5 transition-colors duration-300",
+        tone === "dark"
+          ? "border-white/10 bg-white/[0.04] hover:bg-white/[0.07]"
+          : "border-border bg-card hover:border-jic-forest/30"
       )}
     >
       <div className="flex items-start justify-between">
@@ -72,7 +73,7 @@ export function StatCard({
         {Icon && (
           <div
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-lg",
+              "flex h-8 w-8 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110",
               tone === "dark" ? "bg-white/10 text-jic-saffron" : "bg-jic-forest-light text-jic-forest"
             )}
           >
@@ -80,7 +81,7 @@ export function StatCard({
           </div>
         )}
       </div>
-      <p className={cn("mt-2 font-display text-3xl font-semibold", tone === "dark" ? "text-white" : "text-jic-charcoal")}>
+      <p className={cn("mt-2 font-display text-3xl font-semibold tabular-nums", tone === "dark" ? "text-white" : "text-jic-charcoal")}>
         {value}
       </p>
       {hint && <p className={cn("mt-1 text-xs", tone === "dark" ? "text-white/60" : "text-muted-foreground")}>{hint}</p>}

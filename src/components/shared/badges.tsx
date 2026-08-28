@@ -12,7 +12,7 @@ export function PriorityBadge({ priority, className }: { priority: Priority; cla
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold",
         PRIORITY_STYLES[priority],
         className
       )}
@@ -38,7 +38,7 @@ export function StatusBadge({ status, className }: { status: ChallengeStatus; cl
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+        "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold",
         STATUS_STYLES[status],
         className
       )}
@@ -52,7 +52,7 @@ export function DomainTag({ domain, className }: { domain: string; className?: s
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full bg-jic-forest/8 px-2.5 py-0.5 text-xs font-medium text-jic-forest",
+        "inline-flex items-center rounded-full bg-jic-forest/8 px-2.5 py-1 text-xs font-medium text-jic-forest",
         className
       )}
     >

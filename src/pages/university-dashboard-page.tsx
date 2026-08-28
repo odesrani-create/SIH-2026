@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { NOTIFICATIONS, CHALLENGES, PROJECTS, UNIVERSITIES, INDUSTRY_PARTNERS } from "@/data/demoData";
 import { useAppState } from "@/lib/app-state";
 
-const CHART_COLORS = ["#123524", "#2d6a4f", "#e0a72e", "#c97c5d", "#7c9c8e"];
+const CHART_COLORS = ["#3a3f5c", "#5b6485", "#b8825a", "#a85c5c", "#9098b0"];
 
 const NAV_ITEMS: DashboardNavItem[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -92,7 +92,7 @@ export function UniversityDashboardPage() {
                   <XAxis dataKey="domain" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#2d6a4f" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="value" fill="#5b6485" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -123,7 +123,7 @@ export function UniversityDashboardPage() {
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="students" stroke="#123524" strokeWidth={2.5} dot={false} />
+                  <Line type="monotone" dataKey="students" stroke="#3a3f5c" strokeWidth={2.5} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </ChartCard>

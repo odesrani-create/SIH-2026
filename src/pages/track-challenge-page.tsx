@@ -29,10 +29,15 @@ export function TrackChallengePage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <SectionHeading eyebrow="Transparency" title="Track your challenge" description="Enter your Challenge ID to see exactly where it stands in the process." align="center" className="mx-auto" />
-
-      <div className="mx-auto mt-8 flex max-w-md flex-col gap-2 sm:flex-row">
+    <div>
+      <div className="relative overflow-hidden border-b border-border bg-jic-forest-light/30">
+        <div className="absolute inset-0 bg-grid-texture opacity-[0.25]" />
+        <div className="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8">
+          <SectionHeading eyebrow="Transparency" title="Track your challenge" description="Enter your Challenge ID to see exactly where it stands in the process." align="center" className="mx-auto" />
+        </div>
+      </div>
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -99,6 +104,7 @@ export function TrackChallengePage() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

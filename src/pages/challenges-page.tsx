@@ -55,82 +55,98 @@ export function ChallengesPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <SectionHeading eyebrow="Challenge Explorer" title="Browse societal problems across Jharkhand" description="Search, filter and find the challenges your team, lab or startup is best placed to solve." />
-
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-jic-forest/15 bg-jic-forest-light/50 px-4 py-3 text-sm">
-        <p className="text-jic-charcoal"><span className="font-semibold">New here?</span> Pick a district on the map, then open any challenge to see its progress and contributors.</p>
-        <span className="text-xs font-medium text-jic-forest">No account needed to explore</span>
-      </div>
-
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search challenges…"
-            className="h-11 rounded-full pl-10"
+    <div>
+      <section className="relative overflow-hidden border-b border-border bg-jic-forest-light/30">
+        <div className="absolute inset-0 bg-grid-texture opacity-[0.25]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Challenge Explorer"
+            title="Browse societal problems across Jharkhand"
+            description="Search, filter and find the challenges your team, lab or startup is best placed to solve."
           />
-        </div>
-        <Button
-          variant="outline"
-          className="h-11 gap-2 rounded-full border-jic-forest/30 sm:w-auto"
-          onClick={() => setShowFilters((v) => !v)}
-        >
-          <SlidersHorizontal className="h-4 w-4" /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
-        </Button>
-      </div>
 
-      {showFilters && (
-        <div className="mt-4 grid gap-3 rounded-2xl border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-5">
-          <FilterSelect label="District" value={district} onChange={setDistrict} options={DISTRICT_NAMES} />
-          <FilterSelect label="Domain" value={domain} onChange={setDomain} options={DOMAINS} />
-          <FilterSelect label="Priority" value={priority} onChange={setPriority} options={PRIORITIES} />
-          <FilterSelect label="Status" value={status} onChange={setStatus} options={STATUSES} />
-          <div className="flex items-end">
-            <Button variant="ghost" className="h-10 w-full gap-1.5 text-muted-foreground" onClick={resetFilters}>
-              <X className="h-3.5 w-3.5" /> Clear filters
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-jic-forest/15 bg-white/70 px-4 py-3 text-sm shadow-elevation-xs backdrop-blur">
+            <p className="text-jic-charcoal">
+              <span className="font-semibold">New here?</span> Pick a district on the map, then open any challenge to see its progress and contributors.
+            </p>
+            <span className="text-xs font-medium text-jic-forest">No account needed to explore</span>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Search challenges…"
+                className="h-12 rounded-full bg-white pl-11 shadow-elevation-sm"
+              />
+            </div>
+            <Button
+              variant="outline"
+              className="h-12 gap-2 rounded-full border-jic-forest/30 bg-white sm:w-auto"
+              onClick={() => setShowFilters((v) => !v)}
+            >
+              <SlidersHorizontal className="h-4 w-4" /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
             </Button>
           </div>
+
+          {showFilters && (
+            <div className="animate-fade-up mt-4 grid gap-3 rounded-2xl border border-border bg-card p-4 shadow-elevation-sm sm:grid-cols-2 lg:grid-cols-5">
+              <FilterSelect label="District" value={district} onChange={setDistrict} options={DISTRICT_NAMES} />
+              <FilterSelect label="Domain" value={domain} onChange={setDomain} options={DOMAINS} />
+              <FilterSelect label="Priority" value={priority} onChange={setPriority} options={PRIORITIES} />
+              <FilterSelect label="Status" value={status} onChange={setStatus} options={STATUSES} />
+              <div className="flex items-end">
+                <Button variant="ghost" className="h-10 w-full gap-1.5 text-muted-foreground" onClick={resetFilters}>
+                  <X className="h-3.5 w-3.5" /> Clear filters
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </section>
 
-      <p className="mt-6 text-sm text-muted-foreground">
-        Showing <span className="font-semibold text-jic-charcoal">{Math.min(paged.length, filtered.length)}</span> of{" "}
-        {filtered.length} challenges
-      </p>
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <p className="text-sm text-muted-foreground">
+          Showing <span className="font-semibold text-jic-charcoal">{Math.min(paged.length, filtered.length)}</span> of{" "}
+          {filtered.length} challenges
+        </p>
 
-      <div className="mt-8">
-        <OfflineJharkhandMap districts={DISTRICTS} challenges={CHALLENGES} />
+        <div className="mt-6">
+          <OfflineJharkhandMap districts={DISTRICTS} challenges={CHALLENGES} />
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="mt-10 flex flex-col items-center rounded-2xl border border-dashed border-border bg-muted/20 py-20 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-jic-forest-light text-jic-forest">
+              <Search className="h-6 w-6" />
+            </div>
+            <p className="mt-4 font-display text-lg font-semibold text-jic-charcoal">No challenges match your filters</p>
+            <p className="mt-1 text-sm text-muted-foreground">Try broadening your search or clearing some filters.</p>
+            <Button variant="outline" className="mt-4" onClick={resetFilters}>
+              Clear filters
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {paged.map((c) => (
+              <ChallengeCard key={c.id} challenge={c} />
+            ))}
+          </div>
+        )}
+
+        {paged.length < filtered.length && (
+          <div className="mt-10 flex justify-center">
+            <Button variant="outline" className="border-jic-forest/30" onClick={() => setPage((p) => p + 1)}>
+              Load more challenges
+            </Button>
+          </div>
+        )}
       </div>
-
-      {filtered.length === 0 ? (
-        <div className="mt-10 flex flex-col items-center rounded-2xl border border-dashed border-border py-20 text-center">
-          <p className="font-display text-lg font-semibold text-jic-charcoal">No challenges match your filters</p>
-          <p className="mt-1 text-sm text-muted-foreground">Try broadening your search or clearing some filters.</p>
-          <Button variant="outline" className="mt-4" onClick={resetFilters}>
-            Clear filters
-          </Button>
-        </div>
-      ) : (
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {paged.map((c) => (
-            <ChallengeCard key={c.id} challenge={c} />
-          ))}
-        </div>
-      )}
-
-      {paged.length < filtered.length && (
-        <div className="mt-10 flex justify-center">
-          <Button variant="outline" className="border-jic-forest/30" onClick={() => setPage((p) => p + 1)}>
-            Load more challenges
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

@@ -19,13 +19,13 @@ export function JourneyRibbon({ light = false, activeIndex }: { light?: boolean;
           <div key={step.label} className="flex shrink-0 items-center gap-1 sm:gap-2">
             <div
               className={cn(
-                "flex items-center gap-2 rounded-full border px-3 py-1.5 sm:px-4 sm:py-2",
+                "flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors sm:px-4 sm:py-2",
                 light
                   ? isActive
                     ? "border-jic-saffron bg-jic-saffron/15 text-jic-saffron"
                     : "border-white/15 bg-white/[0.06] text-white/80"
                   : isActive
-                  ? "border-jic-forest bg-jic-forest text-white"
+                  ? "border-jic-forest bg-jic-forest text-white shadow-elevation-sm"
                   : "border-border bg-white text-jic-charcoal/80"
               )}
             >

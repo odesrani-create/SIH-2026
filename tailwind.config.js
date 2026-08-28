@@ -1,5 +1,7 @@
+import tailwindcssAnimate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["class"],
   content: [
     "./index.html",
@@ -59,8 +61,18 @@ module.exports = {
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) - 6px)",
+      },
+      boxShadow: {
+        "elevation-xs": "var(--shadow-xs)",
+        "elevation-sm": "var(--shadow-sm)",
+        "elevation-md": "var(--shadow-md)",
+        "elevation-lg": "var(--shadow-lg)",
+        "elevation-xl": "var(--shadow-xl)",
+      },
+      backgroundImage: {
+        "grid-texture": "radial-gradient(circle at 1.5px 1.5px, hsl(var(--jic-charcoal) / 0.14) 1px, transparent 0)",
       },
       keyframes: {
         "accordion-down": {
@@ -71,12 +83,27 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(14px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-up": "fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "fade-in": "fade-in 0.5s ease-out both",
+        float: "float 6s ease-in-out infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 }
