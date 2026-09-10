@@ -2,13 +2,11 @@ import type { AIAnalysis, Challenge, Domain, University, IndustryPartner } from 
 import { UNIVERSITIES, INDUSTRY_PARTNERS, CHALLENGES } from "@/data/demoData";
 
 /**
- * AI service layer — mocked for the prototype.
+ * AI service layer.
  *
- * Every function below is written to the shape a real call would take
- * (async, plain-object in / out) so that swapping the mock body for a
- * fetch() to an LLM/API endpoint later requires no change to callers.
- * No API keys live here or anywhere in frontend code — a real integration
- * would proxy through a backend route (e.g. POST /api/ai/classify).
+ * In production the browser calls /api/ai/analyze, where the OpenAI key stays
+ * server-side. If the API route is unavailable, the deterministic local model
+ * below keeps the demo usable without credentials.
  */
 
 const DOMAIN_KEYWORDS: Record<Domain, string[]> = {
@@ -25,27 +23,6 @@ const DOMAIN_KEYWORDS: Record<Domain, string[]> = {
   Sanitation: ["sanitation", "toilet", "sewage", "compost", "hygiene"],
   Infrastructure: ["road", "bridge", "culvert", "construction"],
 };
-
-function detectDomain(text: string): Domain {
-  const lower = text.toLowerCase();
-  let best: Domain = "Public Administration";
-  let bestScore = 0;
-  (Object.keys(DOMAIN_KEYWORDS) as Domain[]).forEach((domain) => {
-    const score = DOMAIN_KEYWORDS[domain].filter((kw) => lower.includes(kw)).length;
-    if (score > bestScore) {
-      bestScore = score;
-      best = domain;
-    }
-  });
-  return best;
-}
-
-function scoreImpact(population: number): number {
-  if (population > 8000) return 4.8;
-  if (population > 4000) return 4.4;
-  if (population > 1500) return 4.0;
-  return 3.4;
-}
 
 const DOMAIN_DISCIPLINES: Record<Domain, string[]> = {
   Water: ["Civil Engineering", "Environmental Engineering", "Electronics", "Computer Science"],
@@ -82,7 +59,30 @@ export async function classifyChallenge(input: {
   description: string;
   affectedPopulation: number;
 }): Promise<AIAnalysis> {
-  await delay(1200);
+  try {
+    const response = await fetch("/api/ai/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+
+    if (response.ok) {
+      const result = (await response.json()) as AIAnalysis;
+      if (isValidAIAnalysis(result)) return result;
+    }
+  } catch {
+    // Keep the prototype usable when the server route or AI credentials are unavailable.
+  }
+
+  return localClassifyChallenge(input);
+}
+
+async function localClassifyChallenge(input: {
+  title: string;
+  description: string;
+  affectedPopulation: number;
+}): Promise<AIAnalysis> {
+  await delay(350);
   const domain = detectDomain(`${input.title} ${input.description}`);
   const impactScore = scoreImpact(input.affectedPopulation);
   const priority: AIAnalysis["priority"] =
@@ -99,6 +99,40 @@ export async function classifyChallenge(input: {
   };
 }
 
+function isValidAIAnalysis(value: AIAnalysis): boolean {
+  return Boolean(
+    value &&
+    typeof value.domain === "string" &&
+    typeof value.priority === "string" &&
+    Number.isFinite(value.impactScore) &&
+    Array.isArray(value.relatedDomains) &&
+    Array.isArray(value.potentialSkills) &&
+    Array.isArray(value.suggestedTechnologies) &&
+    ["Low", "Medium", "High"].includes(value.duplicateRisk),
+  );
+}
+
+function detectDomain(text: string): Domain {
+  const lower = text.toLowerCase();
+  let best: Domain = "Public Administration";
+  let bestScore = 0;
+  (Object.keys(DOMAIN_KEYWORDS) as Domain[]).forEach((domain) => {
+    const score = DOMAIN_KEYWORDS[domain].filter((kw) => lower.includes(kw)).length;
+    if (score > bestScore) {
+      bestScore = score;
+      best = domain;
+    }
+  });
+  return best;
+}
+
+function scoreImpact(population: number): number {
+  if (population > 8000) return 4.8;
+  if (population > 4000) return 4.4;
+  if (population > 1500) return 4.0;
+  return 3.4;
+}
+
 function relatedDomainsFor(domain: Domain): string[] {
   const map: Partial<Record<Domain, string[]>> = {
     Water: ["IoT", "Civil Engineering", "Environmental Science"],
@@ -110,7 +144,7 @@ function relatedDomainsFor(domain: Domain): string[] {
 }
 
 async function duplicateRiskFor(title: string): Promise<AIAnalysis["duplicateRisk"]> {
-  await delay(300);
+  await delay(100);
   const lower = title.toLowerCase();
   const matches = CHALLENGES.filter((c) => {
     const words = lower.split(" ").filter((w) => w.length > 4);
@@ -152,8 +186,8 @@ export async function recommendSolutionDirections(analysis: AIAnalysis): Promise
   return [
     `Deploy a ${analysis.suggestedTechnologies[0].toLowerCase()} network for real-time monitoring`,
     `Partner with local ${analysis.potentialSkills[0].toLowerCase()} researchers for field validation`,
-    `Pilot in one village/ward cluster before scaling district-wide`,
-    `Design for low connectivity and minimal maintenance overhead`,
+    "Pilot in one village/ward cluster before scaling district-wide",
+    "Design for low connectivity and minimal maintenance overhead",
   ];
 }
 
