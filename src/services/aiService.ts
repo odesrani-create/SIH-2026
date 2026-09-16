@@ -1,15 +1,5 @@
-import type { AIAnalysis, Challenge, Domain, University, IndustryPartner } from "@/types";
+import type { AIAnalysis, Challenge, Domain, University, IndustryPartner, EvidenceFile } from "@/types";
 import { UNIVERSITIES, INDUSTRY_PARTNERS, CHALLENGES } from "@/data/demoData";
-
-/**
- * AI service layer — mocked for the prototype.
- *
- * Every function below is written to the shape a real call would take
- * (async, plain-object in / out) so that swapping the mock body for a
- * fetch() to an LLM/API endpoint later requires no change to callers.
- * No API keys live here or anywhere in frontend code — a real integration
- * would proxy through a backend route (e.g. POST /api/ai/classify).
- */
 
 const DOMAIN_KEYWORDS: Record<Domain, string[]> = {
   Water: ["water", "pump", "borewell", "irrigation", "groundwater", "drink"],
@@ -32,10 +22,7 @@ function detectDomain(text: string): Domain {
   let bestScore = 0;
   (Object.keys(DOMAIN_KEYWORDS) as Domain[]).forEach((domain) => {
     const score = DOMAIN_KEYWORDS[domain].filter((kw) => lower.includes(kw)).length;
-    if (score > bestScore) {
-      bestScore = score;
-      best = domain;
-    }
+    if (score > bestScore) { bestScore = score; best = domain; }
   });
   return best;
 }
@@ -81,13 +68,14 @@ export async function classifyChallenge(input: {
   title: string;
   description: string;
   affectedPopulation: number;
+  evidence?: EvidenceFile[];
+  location?: { district?: string; block?: string; village?: string; gps?: string };
 }): Promise<AIAnalysis> {
   await delay(1200);
   const domain = detectDomain(`${input.title} ${input.description}`);
   const impactScore = scoreImpact(input.affectedPopulation);
-  const priority: AIAnalysis["priority"] =
-    impactScore >= 4.6 ? "Critical" : impactScore >= 4.2 ? "High" : impactScore >= 3.8 ? "Medium" : "Low";
-
+  const priority: AIAnalysis["priority"] = impactScore >= 4.6 ? "Critical" : impactScore >= 4.2 ? "High" : impactScore >= 3.8 ? "Medium" : "Low";
+  const evidenceQuality = input.evidence?.length ? Math.min(0.98, 0.65 + input.evidence.length * 0.08) : 0.35;
   return {
     domain,
     priority,
@@ -95,7 +83,10 @@ export async function classifyChallenge(input: {
     relatedDomains: relatedDomainsFor(domain),
     potentialSkills: DOMAIN_DISCIPLINES[domain],
     suggestedTechnologies: DOMAIN_TECH[domain],
-    duplicateRisk: await duplicateRiskFor(input.title),
+    duplicateRisk: await duplicateRiskFor(input.title, input.description, input.location),
+    problemDetected: Boolean(input.title.trim() && input.description.trim() && input.evidence?.length),
+    confidence: Math.min(0.96, 0.58 + evidenceQuality * 0.35),
+    evidenceQuality,
   };
 }
 
@@ -109,24 +100,23 @@ function relatedDomainsFor(domain: Domain): string[] {
   return map[domain] ?? ["Systems Engineering", "Data Science", "Public Policy"];
 }
 
-async function duplicateRiskFor(title: string): Promise<AIAnalysis["duplicateRisk"]> {
+async function duplicateRiskFor(title: string, description: string, location?: { district?: string }): Promise<AIAnalysis["duplicateRisk"]> {
   await delay(300);
-  const lower = title.toLowerCase();
+  const text = `${title} ${description}`.toLowerCase();
+  const words = text.split(/\s+/).filter((w) => w.length > 4);
   const matches = CHALLENGES.filter((c) => {
-    const words = lower.split(" ").filter((w) => w.length > 4);
-    return words.some((w) => c.title.toLowerCase().includes(w));
+    const sameDistrict = location?.district ? c.district.toLowerCase() === location.district.toLowerCase() : false;
+    return sameDistrict && words.some((w) => c.title.toLowerCase().includes(w));
   });
-  if (matches.length >= 2) return "Medium";
-  if (matches.length >= 1) return "Low";
+  if (matches.length >= 2) return "High";
+  if (matches.length >= 1) return "Medium";
   return "Low";
 }
 
 export async function matchInstitutions(domain: Domain, tags: string[]): Promise<University[]> {
   await delay(900);
   const scored = UNIVERSITIES.map((u) => {
-    const overlap = u.expertise.filter((e) =>
-      tags.some((t) => e.toLowerCase().includes(t.toLowerCase()) || t.toLowerCase().includes(e.toLowerCase()))
-    ).length;
+    const overlap = u.expertise.filter((e) => tags.some((t) => e.toLowerCase().includes(t.toLowerCase()) || t.toLowerCase().includes(e.toLowerCase()))).length;
     const domainBonus = DOMAIN_DISCIPLINES[domain].some((d) => u.departments.includes(d)) ? 12 : 0;
     return { ...u, matchScore: Math.min(97, 60 + overlap * 8 + domainBonus) };
   });
@@ -136,12 +126,7 @@ export async function matchInstitutions(domain: Domain, tags: string[]): Promise
 export async function matchIndustryPartners(domain: Domain): Promise<IndustryPartner[]> {
   await delay(700);
   const relevant: Partial<Record<Domain, string[]>> = {
-    Water: ["ind-aquatech", "ind-cmpdi"],
-    Energy: ["ind-jharkhand-solar", "ind-greenrise"],
-    Healthcare: ["ind-healthbridge", "ind-tcs"],
-    Agriculture: ["ind-jharkhand-solar", "ind-startup-agrisense"],
-    Environment: ["ind-cmpdi", "ind-tata-steel"],
-    Education: ["ind-cloudnine-edu", "ind-tcs"],
+    Water: ["ind-aquatech", "ind-cmpdi"], Energy: ["ind-jharkhand-solar", "ind-greenrise"], Healthcare: ["ind-healthbridge", "ind-tcs"], Agriculture: ["ind-jharkhand-solar", "ind-startup-agrisense"], Environment: ["ind-cmpdi", "ind-tata-steel"], Education: ["ind-cloudnine-edu", "ind-tcs"],
   };
   const ids = relevant[domain] ?? INDUSTRY_PARTNERS.slice(0, 3).map((p) => p.id);
   return INDUSTRY_PARTNERS.filter((p) => ids.includes(p.id));
@@ -157,9 +142,7 @@ export async function recommendSolutionDirections(analysis: AIAnalysis): Promise
   ];
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+function delay(ms: number) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 
 export function generateTrackingId(): string {
   const year = new Date().getFullYear();
