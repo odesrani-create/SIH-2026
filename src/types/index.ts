@@ -65,6 +65,20 @@ export interface ChallengeContribution {
   stars: number;
 }
 
+export type EvidenceKind = "image" | "video" | "document";
+
+export interface EvidenceFile {
+  id: string;
+  name: string;
+  kind: EvidenceKind;
+  size?: number;
+  type?: string;
+  previewUrl?: string;
+  width?: number;
+  height?: number;
+  lastModified?: number;
+}
+
 export interface AIAnalysis {
   domain: Domain;
   priority: Priority;
@@ -73,6 +87,9 @@ export interface AIAnalysis {
   potentialSkills: string[];
   suggestedTechnologies: string[];
   duplicateRisk: "Low" | "Medium" | "High";
+  problemDetected?: boolean;
+  confidence?: number;
+  evidenceQuality?: number;
 }
 
 export interface University {
