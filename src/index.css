@@ -4,40 +4,40 @@
 
 @layer base {
   :root {
-    --background: 220 25% 97.5%;
-    --foreground: 222 32% 10%;
+    --background: 72 25% 97%;
+    --foreground: 153 32% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222 32% 10%;
+    --card-foreground: 153 32% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 32% 10%;
-    --primary: 234 55% 24%;
-    --primary-foreground: 220 25% 97.5%;
-    --secondary: 231 42% 38%;
-    --secondary-foreground: 220 25% 97.5%;
-    --muted: 220 20% 93.5%;
-    --muted-foreground: 222 12% 40%;
-    --accent: 32 55% 52%;
-    --accent-foreground: 222 35% 10%;
-    --destructive: 356 55% 46%;
-    --destructive-foreground: 220 25% 97.5%;
-    --border: 222 14% 85%;
-    --input: 222 14% 85%;
-    --ring: 234 55% 24%;
+    --primary: 151 55% 27%;
+    --primary-foreground: 72 25% 97%;
+    --secondary: 151 30% 42%;
+    --secondary-foreground: 72 25% 97%;
+    --muted: 84 24% 92%;
+    --muted-foreground: 153 14% 38%;
+    --accent: 35 68% 48%;
+    --accent-foreground: 153 32% 12%;
+    --destructive: 8 58% 44%;
+    --destructive-foreground: 72 25% 97%;
+    --border: 145 17% 82%;
+    --input: 145 17% 82%;
+    --ring: 151 55% 27%;
     --radius: 0.7rem;
 
-    /* Jharkhand Innovation Connect brand tokens — muted indigo / brass identity */
-    --jic-deep-green: 228 32% 11%;
-    --jic-forest-green: 231 30% 34%;
-    --jic-forest-green-light: 228 25% 95%;
-    --jic-earth: 20 38% 46%;
-    --jic-earth-light: 20 30% 95%;
-    --jic-saffron: 32 55% 52%;
-    --jic-saffron-light: 34 40% 93%;
-    --jic-charcoal: 222 24% 12%;
-    --jic-cream: 220 22% 97%;
+    /* Jharkhand Innovation Connect — sal forest, red earth, and warm craft tones */
+    --jic-deep-green: 153 48% 14%;
+    --jic-forest-green: 151 55% 27%;
+    --jic-forest-green-light: 105 30% 92%;
+    --jic-earth: 8 52% 43%;
+    --jic-earth-light: 12 42% 94%;
+    --jic-saffron: 35 68% 48%;
+    --jic-saffron-light: 40 55% 91%;
+    --jic-charcoal: 153 32% 12%;
+    --jic-cream: 72 25% 97%;
 
     /* Elevation scale — flat, hairline-led (shadows reserved for true overlays) */
-    --shadow-color: 228 45% 12%;
+    --shadow-color: 153 40% 12%;
     --shadow-xs: 0 1px 1px hsl(var(--shadow-color) / 0.03);
     --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.04);
     --shadow-md: 0 2px 8px hsl(var(--shadow-color) / 0.06);
@@ -46,25 +46,25 @@
   }
 
   .dark {
-    --background: 230 35% 7%;
-    --foreground: 220 20% 94%;
-    --card: 230 30% 10%;
-    --card-foreground: 220 20% 94%;
-    --popover: 230 30% 10%;
-    --popover-foreground: 220 20% 94%;
-    --primary: 228 65% 68%;
-    --primary-foreground: 233 55% 10%;
-    --secondary: 231 20% 22%;
-    --secondary-foreground: 220 20% 94%;
-    --muted: 230 15% 16%;
-    --muted-foreground: 220 10% 65%;
-    --accent: 32 55% 52%;
-    --accent-foreground: 222 35% 10%;
-    --destructive: 356 68% 55%;
-    --destructive-foreground: 220 20% 94%;
-    --border: 230 15% 18%;
-    --input: 230 15% 18%;
-    --ring: 228 65% 68%;
+    --background: 153 32% 7%;
+    --foreground: 72 25% 94%;
+    --card: 153 28% 10%;
+    --card-foreground: 72 25% 94%;
+    --popover: 153 28% 10%;
+    --popover-foreground: 72 25% 94%;
+    --primary: 145 45% 62%;
+    --primary-foreground: 153 48% 10%;
+    --secondary: 151 20% 22%;
+    --secondary-foreground: 72 25% 94%;
+    --muted: 153 15% 16%;
+    --muted-foreground: 72 10% 65%;
+    --accent: 35 68% 48%;
+    --accent-foreground: 153 32% 10%;
+    --destructive: 8 68% 55%;
+    --destructive-foreground: 72 25% 94%;
+    --border: 153 15% 18%;
+    --input: 153 15% 18%;
+    --ring: 145 45% 62%;
   }
 }
 

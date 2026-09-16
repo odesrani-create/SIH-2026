@@ -69,10 +69,63 @@ export interface AIAnalysis {
   domain: Domain;
   priority: Priority;
   impactScore: number;
+  impactFactors: {
+    population: number;
+    duration: number;
+    severity: number;
+    essentialService: number;
+    geographicSpread: number;
+    evidenceConfidence: number;
+    vulnerableGroups: number;
+  };
   relatedDomains: string[];
   potentialSkills: string[];
   suggestedTechnologies: string[];
   duplicateRisk: "Low" | "Medium" | "High";
+  matchedUniversities: University[];
+  matchedIndustryPartners: IndustryPartner[];
+  teamFormation: TeamFormation | null;
+}
+
+export interface SubmissionValidation {
+  credible: boolean;
+  confidence: number;
+  reason: string;
+  primaryDomain: Domain;
+  relatedDomains: string[];
+  duplicateRisk: "Low" | "Medium" | "High";
+  similarChallenges: {
+    id: string;
+    title: string;
+    trackingId: string;
+    district: string;
+    similarity: number;
+  }[];
+  problemCategory: string;
+  missingInformation: string[];
+  needsMoreEvidence: boolean;
+  evidence: {
+    sufficient: boolean;
+    relevant: "Likely" | "Unclear";
+    clear: "Likely" | "Unclear";
+    possibleDuplicates: number;
+    possibleManipulation: number;
+  };
+}
+
+export interface EvidenceMetadata {
+  id: string;
+  name: string;
+  type: string;
+  category: "Image" | "Video" | "Document" | "Other";
+  sizeBytes: number;
+  sizeLabel: string;
+  width?: number;
+  height?: number;
+  relevant: "Likely" | "Unclear";
+  clear: "Likely" | "Unclear";
+  possibleDuplicate: boolean;
+  possibleManipulation: boolean;
 }
 
 export interface University {
@@ -97,6 +150,7 @@ export interface IndustryPartner {
   district: string;
   activeCollaborations: number;
   logo: string;
+  matchScore?: number;
 }
 
 export interface Milestone {
@@ -110,6 +164,12 @@ export interface TeamMember {
   name: string;
   role: string;
   discipline: string;
+}
+
+export interface TeamFormation {
+  university: string;
+  facultyMentor: TeamMember;
+  students: TeamMember[];
 }
 
 export interface Project {

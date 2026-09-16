@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { DemoUser, UserRole } from "@/types";
 
@@ -26,6 +26,7 @@ interface AppStateValue {
   goTo: (page: PageId, params?: Record<string, string>) => void;
   user: DemoUser | null;
   login: (role: UserRole) => void;
+  loginWithAccount: (account: { name: string; email: string; role?: UserRole; organization?: string }) => void;
   logout: () => void;
 }
 
@@ -59,7 +60,15 @@ const ROLE_ORG: Partial<Record<UserRole, string>> = {
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [nav, setNav] = useState<NavState>({ page: "landing", params: {} });
-  const [user, setUser] = useState<DemoUser | null>(null);
+  const [user, setUser] = useState<(DemoUser & { email?: string }) | null>(() => {
+    const stored = window.localStorage.getItem("jic-auth-session");
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  useEffect(() => {
+    if (user) window.localStorage.setItem("jic-auth-session", JSON.stringify(user));
+    else window.localStorage.removeItem("jic-auth-session");
+  }, [user]);
 
   const goTo = (page: PageId, params: Record<string, string> = {}) => {
     setNav({ page, params });
@@ -71,13 +80,19 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     goTo(ROLE_LANDING[role]);
   };
 
+  const loginWithAccount = (account: { name: string; email: string; role?: UserRole; organization?: string }) => {
+    const role = account.role ?? "citizen";
+    setUser({ name: account.name, email: account.email, role, organization: account.organization ?? ROLE_ORG[role] });
+    goTo(ROLE_LANDING[role]);
+  };
+
   const logout = () => {
     setUser(null);
     goTo("landing");
   };
 
   return (
-    <AppStateContext.Provider value={{ nav, goTo, user, login, logout }}>{children}</AppStateContext.Provider>
+    <AppStateContext.Provider value={{ nav, goTo, user, login, loginWithAccount, logout }}>{children}</AppStateContext.Provider>
   );
 }
 
