@@ -116,6 +116,7 @@ export interface SubmissionValidation {
 export interface EvidenceMetadata {
   id: string;
   name: string;
+  storagePath?: string;
   type: string;
   category: "Image" | "Video" | "Document" | "Other";
   sizeBytes: number;

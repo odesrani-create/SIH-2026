@@ -1,5 +1,16 @@
 # React + TypeScript + Vite
 
+## Supabase setup
+
+The app can run without Supabase using local browser storage. To enable shared challenge data:
+
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` in the Supabase SQL editor.
+3. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+4. Restart the Vite dev server.
+
+Challenge validation checks the demo records and all stored Supabase submissions for similar title, description, domain, and location signals. Evidence files are uploaded to the private `challenge-evidence` bucket when Supabase is configured. The client only uses the public anon key; production deployments should replace the open insert policies with authenticated users or an Edge Function and add signed download policies for reviewers.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

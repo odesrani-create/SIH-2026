@@ -25,6 +25,7 @@ import { useAppState } from "@/lib/app-state";
 import type { AIAnalysis, EvidenceMetadata, SubmissionValidation } from "@/types";
 import { cn } from "@/lib/utils";
 import { validateSubmission } from "@/services/aiService";
+import { saveChallenge, uploadEvidenceFiles } from "@/services/challengeRepository";
 
 const STEPS = ["Problem Description", "Evidence", "Location", "Symptoms", "Duration", "AI Validation", "Outcome", "Review"];
 
@@ -75,13 +76,14 @@ const EMPTY_FORM: FormData = {
 type Phase = "form" | "analyzing" | "success";
 
 export function SubmitChallengePage() {
-  const { goTo } = useAppState();
+  const { goTo, user } = useAppState();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [phase, setPhase] = useState<Phase>("form");
   const [checksDone, setChecksDone] = useState(0);
   const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
   const [trackingId, setTrackingId] = useState("");
+  const [submissionError, setSubmissionError] = useState("");
 
   const update = (patch: Partial<FormData>) => setForm((f) => ({ ...f, ...patch }));
 
@@ -112,35 +114,68 @@ export function SubmitChallengePage() {
   };
 
   const submit = async () => {
+    if (!form.validation) return;
     setPhase("analyzing");
+    setSubmissionError("");
     setChecksDone(0);
     const interval = setInterval(() => {
       setChecksDone((n) => Math.min(n + 1, ANALYSIS_CHECKS.length));
     }, 550);
 
-    const result = await classifyChallenge({
-      title: form.title,
-      description: form.description,
-      duration: form.duration,
-      symptoms: form.symptoms,
-      category: form.category,
-      affectedGroup: form.affectedGroup,
-      location: [form.district, form.block, form.village].filter(Boolean).join(", "),
-      gps: form.gps,
-      evidenceFiles: form.evidenceFiles,
-      expectedOutcome: form.outcome,
-      affectedPopulation: Number(form.population) || 500,
-      validationConfidence: form.validation?.confidence,
-    });
-    const matchedUniversities = await matchInstitutions(result.domain, result.potentialSkills);
-    const matchedIndustryPartners = await matchIndustryPartners(result.domain, result.suggestedTechnologies);
+    try {
+      const result = await classifyChallenge({
+        title: form.title,
+        description: form.description,
+        duration: form.duration,
+        symptoms: form.symptoms,
+        category: form.category,
+        affectedGroup: form.affectedGroup,
+        location: [form.district, form.block, form.village].filter(Boolean).join(", "),
+        gps: form.gps,
+        evidenceFiles: form.evidenceFiles,
+        expectedOutcome: form.outcome,
+        affectedPopulation: Number(form.population) || 500,
+        validationConfidence: form.validation.confidence,
+      });
+      const matchedUniversities = await matchInstitutions(result.domain, result.potentialSkills);
+      const matchedIndustryPartners = await matchIndustryPartners(result.domain, result.suggestedTechnologies);
+      const nextTrackingId = generateTrackingId();
+      const validation = form.validation;
+      const evidence = await uploadEvidenceFiles(form.evidenceFiles, nextTrackingId, form.evidenceMetadata);
 
-    await new Promise((r) => setTimeout(r, ANALYSIS_CHECKS.length * 550 + 300));
-    clearInterval(interval);
-    setChecksDone(ANALYSIS_CHECKS.length);
-    setAnalysis({ ...result, matchedUniversities, matchedIndustryPartners, teamFormation: createMultidisciplinaryTeam(matchedUniversities[0], result.potentialSkills, result.domain) });
-    setTrackingId(generateTrackingId());
-    setPhase("success");
+      await saveChallenge({
+        trackingId: nextTrackingId,
+        title: form.title,
+        description: form.description,
+        duration: form.duration,
+        symptoms: form.symptoms,
+        category: form.category,
+        affectedGroup: form.affectedGroup,
+        population: Number(form.population) || 500,
+        district: form.district,
+        block: form.block,
+        village: form.village,
+        gps: form.gps,
+        outcome: form.outcome,
+        domain: result.domain,
+        priority: result.priority,
+        duplicateRisk: validation.duplicateRisk,
+        submittedBy: user?.name ?? "Community reporter",
+        validation,
+        evidence,
+      });
+
+      await new Promise((r) => setTimeout(r, ANALYSIS_CHECKS.length * 550 + 300));
+      clearInterval(interval);
+      setChecksDone(ANALYSIS_CHECKS.length);
+      setAnalysis({ ...result, matchedUniversities, matchedIndustryPartners, teamFormation: createMultidisciplinaryTeam(matchedUniversities[0], result.potentialSkills, result.domain) });
+      setTrackingId(nextTrackingId);
+      setPhase("success");
+    } catch (error) {
+      clearInterval(interval);
+      setSubmissionError(error instanceof Error ? error.message : "The challenge could not be submitted. Please try again.");
+      setPhase("form");
+    }
   };
 
   if (phase === "analyzing") return <AnalyzingScreen checksDone={checksDone} />;
@@ -155,9 +190,10 @@ export function SubmitChallengePage() {
           <SectionHeading eyebrow="Submit a Challenge" title="Tell us about the problem in your community" description="It takes about 3 minutes. Our AI will analyse it right after you submit." />
         </div>
       </div>
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-3xl px-3 py-8 sm:px-6 sm:py-12 lg:px-8">
       {/* Stepper */}
-      <div className="mt-8 flex items-center justify-between">
+      <div className="mt-4 overflow-x-auto pb-2 sm:mt-8">
+        <div className="flex min-w-[620px] items-center justify-between">
         {STEPS.map((label, i) => (
           <div key={label} className="flex flex-1 items-center">
             <div className="flex flex-col items-center gap-1.5">
@@ -180,9 +216,11 @@ export function SubmitChallengePage() {
             {i < STEPS.length - 1 && <div className={cn("mx-2 h-0.5 flex-1", i < step ? "bg-jic-forest" : "bg-border")} />}
           </div>
         ))}
+        </div>
       </div>
 
-      <div className="mt-10 rounded-2xl border border-border bg-card p-6 sm:p-8">
+      <div className="mt-6 rounded-2xl border border-border bg-card p-4 sm:mt-10 sm:p-8">
+        {submissionError && <p className="mb-5 rounded-lg bg-jic-earth-light px-3 py-2 text-sm text-jic-earth">{submissionError}</p>}
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}>
             {step === 0 && <StepProblem form={form} update={update} />}
@@ -196,7 +234,7 @@ export function SubmitChallengePage() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="mt-8 flex items-center justify-between border-t border-border pt-6">
+        <div className="mt-6 flex items-center justify-between gap-3 border-t border-border pt-5 sm:mt-8 sm:pt-6">
           <Button variant="ghost" disabled={step === 0} onClick={() => setStep((s) => s - 1)} className="gap-1.5">
             <ChevronLeft className="h-4 w-4" /> Back
           </Button>
@@ -309,9 +347,9 @@ function StepLocation({ form, update }: { form: FormData; update: (p: Partial<Fo
         <Input value={form.village} onChange={(e) => update({ village: e.target.value })} placeholder="e.g. Kathikund" />
       </Field>
       <Field label="GPS location">
-        <div className="flex gap-2">
-          <Input value={form.gps} onChange={(e) => update({ gps: e.target.value })} placeholder="Lat, Long (optional)" />
-          <Button type="button" variant="outline" onClick={useCurrentLocation}>Use current location</Button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Input className="min-w-0 flex-1" value={form.gps} onChange={(e) => update({ gps: e.target.value })} placeholder="Lat, Long (optional)" />
+            <Button type="button" variant="outline" className="w-full shrink-0 sm:w-auto" onClick={useCurrentLocation}>Use current location</Button>
         </div>
         {locationError && <p className="mt-1.5 text-xs text-destructive">{locationError}</p>}
       </Field>

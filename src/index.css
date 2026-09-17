@@ -180,6 +180,11 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
+    overflow-x: hidden;
+  }
+
+  img, video, svg {
+    max-width: 100%;
   }
 
   ::-webkit-scrollbar {

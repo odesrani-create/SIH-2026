@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { ArrowRight, Eye, EyeOff, Factory, GraduationCap, Landmark, LockKeyhole, Mail, Sprout, User, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppState } from "@/lib/app-state";
+import { DEMO_ACCOUNTS, useAppState } from "@/lib/app-state";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +18,7 @@ const ROLES: { id: UserRole; label: string; icon: React.ElementType }[] = [
 ];
 
 export function LoginPage() {
-  const { loginWithAccount } = useAppState();
+  const { loginWithCredentials, createAccount } = useAppState();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,7 +37,10 @@ export function LoginPage() {
     if (mode === "forgot") return setMessage(`Password reset instructions were sent to ${email}.`);
     if (password.length < 8) return setMessage("Password must be at least 8 characters.");
     if (mode === "signup" && password !== confirmPassword) return setMessage("Passwords do not match.");
-    loginWithAccount({ name: mode === "signup" ? name : email.split("@")[0], email, role, organization });
+    const result = mode === "signup"
+      ? createAccount({ name, email, password, role, organization })
+      : loginWithCredentials(email, password);
+    if (result) setMessage(result);
   };
 
   const title = mode === "signup" ? "Create your account" : mode === "forgot" ? "Reset your password" : "Welcome back";
@@ -53,12 +56,12 @@ export function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-jic-deep text-jic-saffron"><Sprout className="h-5 w-5" /></span><span className="font-display text-base font-semibold text-jic-charcoal">Jharkhand Innovation Connect</span></div>
           <h2 className="font-display text-2xl font-semibold text-jic-charcoal">{title}</h2><p className="mt-1.5 text-sm text-muted-foreground">{mode === "forgot" ? "Enter your email and we will send reset instructions." : "Join Jharkhand's community problem-solving network."}</p>
-          {mode !== "forgot" && <button type="button" onClick={() => loginWithAccount({ name: "Google Citizen", email: "google-user@example.com", role: "citizen" })} className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-border bg-card text-sm font-semibold text-jic-charcoal hover:border-jic-forest hover:bg-jic-forest-light/30"><span className="text-base font-bold text-red-500">G</span> Continue with Google</button>}
+          {mode === "signin" && <div className="mt-5 rounded-lg border border-border bg-card p-3"><p className="text-xs font-semibold text-jic-charcoal">Demo access</p><p className="mt-1 text-xs text-muted-foreground">Password: <span className="font-semibold text-jic-charcoal">Demo@123</span></p><div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3">{DEMO_ACCOUNTS.map((account) => <button key={account.email} type="button" onClick={() => { setEmail(account.email); setPassword(account.password); setRole(account.role); }} className="rounded border border-border px-2 py-1.5 text-left text-[11px] font-semibold text-muted-foreground hover:border-jic-forest hover:text-jic-forest">{account.role}</button>)}</div></div>}
           {mode !== "forgot" && <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" /> or continue with email <span className="h-px flex-1 bg-border" /></div>}
           <form onSubmit={submit} className="space-y-4">
             {mode === "signup" && <><Field label="Full name"><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" required /></Field><Field label="Organization (optional)"><Input value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="University, company, or community" /></Field></>}
             <Field label="Email address"><div className="relative"><Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required /></div></Field>
-            {mode !== "forgot" && <><Field label="I am joining as"><div className="grid grid-cols-3 gap-2">{ROLES.map((item) => <button type="button" key={item.id} onClick={() => setRole(item.id)} className={cn("rounded-lg border px-2 py-2 text-xs font-semibold", role === item.id ? "border-jic-forest bg-jic-forest-light text-jic-forest" : "border-border bg-card text-muted-foreground")}>{item.label}</button>)}</div></Field><Field label="Password"><PasswordInput value={password} onChange={setPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} /></Field></>}
+            {mode !== "forgot" && <><Field label="I am joining as"><div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{ROLES.map((item) => <button type="button" key={item.id} onClick={() => setRole(item.id)} className={cn("min-h-10 rounded-lg border px-2 py-2 text-xs font-semibold", role === item.id ? "border-jic-forest bg-jic-forest-light text-jic-forest" : "border-border bg-card text-muted-foreground")}>{item.label}</button>)}</div></Field><Field label="Password"><PasswordInput value={password} onChange={setPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} /></Field></>}
             {mode === "signup" && <Field label="Confirm password"><PasswordInput value={confirmPassword} onChange={setConfirmPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} /></Field>}
             {mode === "signin" && <div className="flex justify-end"><button type="button" className="text-xs font-semibold text-jic-forest hover:underline" onClick={() => switchMode("forgot")}>Forgot password?</button></div>}
             {message && <p className="rounded-lg bg-jic-earth-light px-3 py-2 text-sm text-jic-earth">{message}</p>}

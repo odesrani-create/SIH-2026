@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { PriorityBadge } from "@/components/shared/badges";
-import { findChallengeByTrackingId } from "@/services/aiService";
+import { findChallengeByTrackingIdFromServer } from "@/services/challengeRepository";
 import type { Challenge, ChallengeStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -22,10 +22,13 @@ const TIMELINE: ChallengeStatus[] = [
 export function TrackChallengePage() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState<Challenge | null | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
 
-  const search = () => {
+  const search = async () => {
     if (!input.trim()) return;
-    setResult(findChallengeByTrackingId(input) ?? null);
+    setLoading(true);
+    setResult(await findChallengeByTrackingIdFromServer(input) ?? null);
+    setLoading(false);
   };
 
   return (
@@ -48,8 +51,8 @@ export function TrackChallengePage() {
             className="h-11 rounded-full pl-10 font-mono"
           />
         </div>
-        <Button className="h-11 bg-jic-deep text-jic-cream hover:bg-jic-deep/90" onClick={search}>
-          Track
+        <Button className="h-11 bg-jic-deep text-jic-cream hover:bg-jic-deep/90" onClick={search} disabled={loading}>
+          {loading ? "Checking..." : "Track"}
         </Button>
       </div>
       <p className="mt-2 text-center text-xs text-muted-foreground">

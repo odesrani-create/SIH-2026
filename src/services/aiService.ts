@@ -1,5 +1,6 @@
 import type { AIAnalysis, Challenge, Domain, University, IndustryPartner, SubmissionValidation, EvidenceMetadata, TeamFormation } from "@/types";
 import { UNIVERSITIES, INDUSTRY_PARTNERS, CHALLENGES } from "@/data/demoData";
+import { listSubmittedChallenges } from "@/services/challengeRepository";
 
 /**
  * AI service layer — mocked for the prototype.
@@ -146,7 +147,7 @@ export async function validateSubmission(input: {
   ].filter(Boolean).join(" ");
   const primaryDomain = detectDomain(text);
   const relatedDomains = relatedDomainsFor(primaryDomain);
-  const similarChallenges = findSimilarChallenges(text, primaryDomain, input.location);
+  const similarChallenges = findSimilarChallenges(text, primaryDomain, input.location, await listSubmittedChallenges());
   const topSimilarity = similarChallenges[0]?.similarity ?? 0;
   const duplicateRisk: SubmissionValidation["duplicateRisk"] = topSimilarity >= 70
     ? "High"
@@ -228,11 +229,12 @@ export async function validateSubmission(input: {
   };
 }
 
-function findSimilarChallenges(text: string, domain: Domain, location?: string): SubmissionValidation["similarChallenges"] {
+function findSimilarChallenges(text: string, domain: Domain, location?: string, submittedChallenges: Challenge[] = []): SubmissionValidation["similarChallenges"] {
   const newWords = tokenize(text);
   const normalizedLocation = location?.toLowerCase() ?? "";
+  const knownChallenges = [...CHALLENGES, ...submittedChallenges];
 
-  return CHALLENGES.map((challenge) => {
+  return knownChallenges.map((challenge) => {
     const existingText = [challenge.title, challenge.description, challenge.currentSituation, challenge.desiredOutcome].join(" ");
     const existingWords = tokenize(existingText);
     const sharedWords = Array.from(existingWords).filter((word) => newWords.has(word));
@@ -411,14 +413,10 @@ function relatedDomainsFor(domain: Domain): string[] {
 }
 
 async function duplicateRiskFor(title: string): Promise<AIAnalysis["duplicateRisk"]> {
-  await delay(300);
-  const lower = title.toLowerCase();
-  const matches = CHALLENGES.filter((c) => {
-    const words = lower.split(" ").filter((w) => w.length > 4);
-    return words.some((w) => c.title.toLowerCase().includes(w));
-  });
-  if (matches.length >= 2) return "Medium";
-  if (matches.length >= 1) return "Low";
+  const submittedChallenges = await listSubmittedChallenges();
+  const matches = findSimilarChallenges(title, detectDomain(title), undefined, submittedChallenges);
+  if (matches.some((match) => match.similarity >= 70)) return "High";
+  if (matches.some((match) => match.similarity >= 42)) return "Medium";
   return "Low";
 }
 

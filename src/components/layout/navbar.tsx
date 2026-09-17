@@ -36,12 +36,12 @@ export function Navbar() {
           : "border-transparent bg-background/60 backdrop-blur-md"
       )}
     >
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        <button onClick={() => goTo("landing")} className="group flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-jic-deep text-jic-saffron">
+      <div className="mx-auto flex h-16 min-w-0 max-w-[1400px] items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
+        <button onClick={() => goTo("landing")} className="group flex min-w-0 items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-jic-deep text-jic-saffron">
             <Sprout className="h-4 w-4" />
           </span>
-          <span className="font-display text-[15px] font-semibold leading-none tracking-tight text-jic-charcoal">
+          <span className="hidden truncate font-display text-[15px] font-semibold leading-none tracking-tight text-jic-charcoal min-[380px]:block">
             Jharkhand Innovation Connect
           </span>
         </button>
@@ -113,7 +113,7 @@ export function Navbar() {
             Submit a Challenge
           </Button>
           <button
-            className="flex h-9 w-9 items-center justify-center rounded-md text-jic-charcoal hover:bg-muted lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-jic-charcoal hover:bg-muted lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
           >
