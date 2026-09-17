@@ -7,13 +7,13 @@ The app can run without Supabase using local browser storage. To enable shared c
 1. Create a Supabase project and install dependencies with `pnpm install`.
 2. Authenticate the project-local CLI with `pnpm supabase login`, then link the project with `pnpm supabase link --project-ref your-project-ref`.
 3. Run `supabase/schema.sql` in the Supabase SQL editor.
-4. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+4. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and the browser-safe `VITE_SUPABASE_PUBLISHABLE_KEY`.
 5. Restart the Vite dev server.
 
 To enable server-side AI analysis:
 
 ```bash
-pnpm supabase functions deploy analyze-challenge
+pnpm supabase functions deploy analyze-challenge --use-api --no-verify-jwt
 pnpm supabase secrets set OPENAI_API_KEY=your-openai-api-key
 pnpm supabase secrets set OPENAI_MODEL=gpt-4o-mini
 ```
