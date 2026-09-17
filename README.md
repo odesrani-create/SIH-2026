@@ -4,10 +4,23 @@
 
 The app can run without Supabase using local browser storage. To enable shared challenge data:
 
-1. Create a Supabase project.
-2. Run `supabase/schema.sql` in the Supabase SQL editor.
-3. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
-4. Restart the Vite dev server.
+1. Create a Supabase project and install dependencies with `pnpm install`.
+2. Authenticate the project-local CLI with `pnpm supabase login`, then link the project with `pnpm supabase link --project-ref your-project-ref`.
+3. Run `supabase/schema.sql` in the Supabase SQL editor.
+4. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+5. Restart the Vite dev server.
+
+To enable server-side AI analysis:
+
+```bash
+pnpm supabase functions deploy analyze-challenge
+pnpm supabase secrets set OPENAI_API_KEY=your-openai-api-key
+pnpm supabase secrets set OPENAI_MODEL=gpt-4o-mini
+```
+
+Then set `VITE_USE_AI_EDGE_FUNCTION=true`. The browser never receives the provider key. If the function is unavailable, the app uses its local deterministic analyzer. Never put an OpenAI key in `OPENAI_MODEL`; that variable must contain a model name.
+
+If a provider key or Supabase access token was pasted into a terminal, chat, commit, or log, revoke it in the provider dashboard and issue a replacement before deploying.
 
 Challenge validation checks the demo records and all stored Supabase submissions for similar title, description, domain, and location signals. Evidence files are uploaded to the private `challenge-evidence` bucket when Supabase is configured. The client only uses the public anon key; production deployments should replace the open insert policies with authenticated users or an Edge Function and add signed download policies for reviewers.
 

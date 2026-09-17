@@ -1,6 +1,7 @@
 import type { AIAnalysis, Challenge, Domain, University, IndustryPartner, SubmissionValidation, EvidenceMetadata, TeamFormation } from "@/types";
 import { UNIVERSITIES, INDUSTRY_PARTNERS, CHALLENGES } from "@/data/demoData";
 import { listSubmittedChallenges } from "@/services/challengeRepository";
+import { supabase, useAIEdgeFunction } from "@/lib/supabase";
 
 /**
  * AI service layer — mocked for the prototype.
@@ -273,6 +274,11 @@ export async function classifyChallenge(input: {
   affectedPopulation: number;
   validationConfidence?: number;
 }): Promise<AIAnalysis> {
+  if (supabase && useAIEdgeFunction) {
+    const serverResult = await analyzeWithEdgeFunction(input);
+    if (serverResult) return serverResult;
+  }
+
   await delay(1200);
   const domain = detectDomain(`${input.title} ${input.description}`);
   const impactFactors = scoreImpactFactors({
@@ -309,6 +315,29 @@ export async function classifyChallenge(input: {
     matchedIndustryPartners: [],
     teamFormation: null,
   };
+}
+
+async function analyzeWithEdgeFunction(input: Parameters<typeof classifyChallenge>[0]): Promise<AIAnalysis | null> {
+  const existingChallenges = await listSubmittedChallenges();
+  const { data, error } = await supabase!.functions.invoke("analyze-challenge", {
+    body: {
+      ...input,
+      evidenceFiles: undefined,
+      existingChallenges: existingChallenges.map((challenge) => ({
+        title: challenge.title,
+        description: challenge.description,
+        domain: challenge.domain,
+        district: challenge.district,
+        block: challenge.block,
+        village: challenge.village,
+      })),
+    },
+  });
+  if (error || !data || typeof data.domain !== "string") {
+    console.warn("AI Edge Function unavailable. Falling back to local analysis.", error?.message ?? "Invalid response");
+    return null;
+  }
+  return { ...data, matchedUniversities: [], matchedIndustryPartners: [], teamFormation: null } as AIAnalysis;
 }
 
 export function createMultidisciplinaryTeam(university: University | undefined, expertise: string[], domain: Domain): TeamFormation | null {

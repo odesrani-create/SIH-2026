@@ -134,11 +134,12 @@ export async function saveChallenge(submission: ChallengeSubmission): Promise<vo
 
 export async function uploadEvidenceFiles(files: File[], trackingId: string, metadata: EvidenceMetadata[]): Promise<EvidenceMetadata[]> {
   if (!supabase || files.length === 0) return metadata;
+  const client = supabase;
 
   const uploaded = await Promise.all(files.map(async (file, index) => {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
     const storagePath = `${trackingId}/${crypto.randomUUID()}-${safeName}`;
-    const { error } = await supabase.storage.from("challenge-evidence").upload(storagePath, file, { upsert: false, contentType: file.type || undefined });
+    const { error } = await client.storage.from("challenge-evidence").upload(storagePath, file, { upsert: false, contentType: file.type || undefined });
     if (error) throw new Error(`Could not upload evidence: ${error.message}`);
     return { ...metadata[index], storagePath };
   }));
