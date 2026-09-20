@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { DemoUser, UserRole } from "@/types";
+import { supabase } from "@/lib/supabase";
 
 export type PageId =
   | "landing"
@@ -26,10 +27,10 @@ interface AppStateValue {
   goTo: (page: PageId, params?: Record<string, string>) => void;
   user: DemoUser | null;
   login: (role: UserRole) => void;
-  loginWithCredentials: (email: string, password: string) => string | null;
-  createAccount: (account: { name: string; email: string; password: string; role: UserRole; organization?: string }) => string | null;
+  loginWithCredentials: (email: string, password: string) => Promise<string | null>;
+  createAccount: (account: { name: string; email: string; password: string; role: UserRole; organization?: string }) => Promise<string | null>;
   loginWithAccount: (account: { name: string; email: string; role?: UserRole; organization?: string }) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AppStateContext = createContext<AppStateValue | null>(null);
@@ -84,21 +85,63 @@ function readAccounts() {
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [nav, setNav] = useState<NavState>({ page: "landing", params: {} });
-  const [user, setUser] = useState<(DemoUser & { email?: string }) | null>(() => {
-    const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
-    if (!stored) return null;
-    try {
-      return JSON.parse(stored);
-    } catch {
-      window.localStorage.removeItem(SESSION_STORAGE_KEY);
-      return null;
-    }
-  });
+  const [user, setUser] = useState<(DemoUser & { email?: string }) | null>(null);
 
   useEffect(() => {
-    if (user) window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
-    else window.localStorage.removeItem(SESSION_STORAGE_KEY);
-  }, [user]);
+    if (!supabase) {
+      const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch {
+          window.localStorage.removeItem(SESSION_STORAGE_KEY);
+        }
+      }
+      return;
+    }
+
+    let active = true;
+    const hydrateUser = async (userId: string, email: string, metadata: Record<string, unknown>) => {
+      const client = supabase;
+      if (!client) return;
+      const { data } = await client.from("profiles").select("name, email, role, organization").eq("user_id", userId).maybeSingle();
+      if (!active) return;
+      const role = data?.role as UserRole | undefined;
+      if (role && data) {
+        setUser({ name: data.name, email: data.email, role, organization: data.organization ?? undefined });
+        return;
+      }
+      const metadataRole = metadata.role as UserRole | undefined;
+      if (metadataRole) {
+        const profile = {
+          user_id: userId,
+          name: String(metadata.name ?? email),
+          email,
+          role: metadataRole,
+          organization: String(metadata.organization ?? "") || null,
+        };
+        if (!data) await client.from("profiles").upsert(profile);
+        if (active) setUser({ name: profile.name, email, role: metadataRole, organization: profile.organization ?? undefined });
+      }
+    };
+
+    void supabase.auth.getSession().then(({ data }) => {
+      const sessionUser = data.session?.user;
+      if (sessionUser) void hydrateUser(sessionUser.id, sessionUser.email ?? "", sessionUser.user_metadata);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        setUser(null);
+        return;
+      }
+      setTimeout(() => void hydrateUser(session.user.id, session.user.email ?? "", session.user.user_metadata), 0);
+    });
+
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const goTo = (page: PageId, params: Record<string, string> = {}) => {
     const requiredRoles: Partial<Record<PageId, UserRole[]>> = {
@@ -121,28 +164,50 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setNav({ page: ROLE_LANDING[role], params: {} });
   };
 
-  const loginWithCredentials = (email: string, password: string) => {
+  const loginWithCredentials = async (email: string, password: string) => {
     const account = readAccounts().find((item) => item.email.toLowerCase() === email.trim().toLowerCase());
-    if (!account || account.password !== password) return "Email or password is incorrect.";
-    loginWithAccount(account);
-    return null;
+    if (account?.password === password) {
+      loginWithAccount(account);
+      return null;
+    }
+    if (!supabase) return "Email or password is incorrect.";
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    return error?.message ?? null;
   };
 
-  const createAccount = (account: { name: string; email: string; password: string; role: UserRole; organization?: string }) => {
+  const createAccount = async (account: { name: string; email: string; password: string; role: UserRole; organization?: string }) => {
     const normalizedEmail = account.email.trim().toLowerCase();
-    if (readAccounts().some((item) => item.email.toLowerCase() === normalizedEmail)) return "An account with this email already exists.";
-    const stored = window.localStorage.getItem(ACCOUNT_STORAGE_KEY);
-    let accounts = [];
-    if (stored) {
-      try {
-        accounts = JSON.parse(stored);
-      } catch {
-        accounts = [];
+    if (!supabase) {
+      if (readAccounts().some((item) => item.email.toLowerCase() === normalizedEmail)) return "An account with this email already exists.";
+      const stored = window.localStorage.getItem(ACCOUNT_STORAGE_KEY);
+      let accounts = [];
+      if (stored) {
+        try {
+          accounts = JSON.parse(stored);
+        } catch {
+          accounts = [];
+        }
       }
+      window.localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify([...accounts, { ...account, email: normalizedEmail }]));
+      loginWithAccount({ ...account, email: normalizedEmail });
+      return null;
     }
-    window.localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify([...accounts, { ...account, email: normalizedEmail }]));
-    loginWithAccount({ ...account, email: normalizedEmail });
-    return null;
+
+    const { data, error } = await supabase.auth.signUp({
+      email: normalizedEmail,
+      password: account.password,
+      options: { data: { name: account.name, role: account.role, organization: account.organization ?? "" } },
+    });
+    if (error || !data.user) return error?.message ?? "Unable to create account.";
+    if (!data.session) return "Account created. Check your email to confirm your account before signing in.";
+    const { error: profileError } = await supabase.from("profiles").insert({
+      user_id: data.user.id,
+      name: account.name,
+      email: normalizedEmail,
+      role: account.role,
+      organization: account.organization ?? null,
+    });
+    return profileError?.message ?? null;
   };
 
   const loginWithAccount = (account: { name: string; email: string; role?: UserRole; organization?: string }) => {
@@ -151,7 +216,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setNav({ page: ROLE_LANDING[role], params: {} });
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (supabase) await supabase.auth.signOut();
+    window.localStorage.removeItem(SESSION_STORAGE_KEY);
     setUser(null);
     goTo("landing");
   };

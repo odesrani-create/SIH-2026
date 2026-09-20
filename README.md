@@ -10,6 +10,8 @@ The app can run without Supabase using local browser storage. To enable shared c
 4. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and the browser-safe `VITE_SUPABASE_PUBLISHABLE_KEY`.
 5. Restart the Vite dev server.
 
+The login and signup screens use Supabase Auth when these variables are configured. New accounts also create a row in the `profiles` table, including the selected role and organization. Enable email confirmation in the Supabase Auth settings if you want users to verify their email before signing in. The built-in demo accounts remain available for local prototype access.
+
 To enable server-side AI analysis:
 
 ```bash

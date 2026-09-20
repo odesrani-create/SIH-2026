@@ -30,7 +30,7 @@ export function LoginPage() {
   const [message, setMessage] = useState("");
 
   const switchMode = (next: AuthMode) => { setMode(next); setMessage(""); };
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
     setMessage("");
     if (!email.includes("@")) return setMessage("Enter a valid email address.");
@@ -38,8 +38,8 @@ export function LoginPage() {
     if (password.length < 8) return setMessage("Password must be at least 8 characters.");
     if (mode === "signup" && password !== confirmPassword) return setMessage("Passwords do not match.");
     const result = mode === "signup"
-      ? createAccount({ name, email, password, role, organization })
-      : loginWithCredentials(email, password);
+      ? await createAccount({ name, email, password, role, organization })
+      : await loginWithCredentials(email, password);
     if (result) setMessage(result);
   };
 
