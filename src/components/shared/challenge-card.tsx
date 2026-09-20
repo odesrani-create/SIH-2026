@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import type { Challenge } from "@/types";
 import { PriorityBadge, StatusBadge } from "@/components/shared/badges";
@@ -6,13 +7,25 @@ import { useAppState } from "@/lib/app-state";
 
 export function ChallengeCard({ challenge }: { challenge: Challenge }) {
   const { goTo } = useAppState();
+  const [imageError, setImageError] = useState(false);
+
   return (
     <button
       onClick={() => goTo("challenge-detail", { id: challenge.id })}
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-left shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:border-jic-forest/25 hover:shadow-elevation-lg"
     >
-      <div className="relative">
-        <DomainVisual domain={challenge.domain} className="h-32 w-full" />
+      <div className="relative h-32 overflow-hidden">
+        {!imageError && challenge.image ? (
+          <img
+            src={challenge.image}
+            alt={challenge.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <DomainVisual domain={challenge.domain} className="h-full w-full" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
         <div className="absolute left-3 top-3">
           <StatusBadge status={challenge.status} className="border-white/25 bg-white/90 shadow-elevation-xs backdrop-blur" />
         </div>

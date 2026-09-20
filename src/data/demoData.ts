@@ -174,6 +174,8 @@ export const INDUSTRY_PARTNERS: IndustryPartner[] = [
   { id: "ind-greenrise", name: "GreenRise Energy Startup", technologyArea: "Clean Energy", support: ["Hardware", "Funding", "Deployment"], district: "Giridih", activeCollaborations: 1, logo: "GRE" },
 ];
 
+const photo = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=80`;
+
 export const CHALLENGES: Challenge[] = [
   {
     id: "ch-001",
@@ -193,7 +195,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Village Water Committee, Kathikund",
     submittedDate: "2025-11-04",
     tags: ["IoT", "Water", "Rural", "Sustainability"],
-    image: "water-monitoring",
+    image: photo("photo-1541888946425-d81bb19240f5"),
     assignedUniversity: "Birla Institute of Technology, Mesra",
     matchScore: 94,
   },
@@ -214,7 +216,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "District Education Office, Gumla",
     submittedDate: "2025-12-01",
     tags: ["EdTech", "Offline-first", "Mobile"],
-    image: "education-tracker",
+    image: photo("photo-1503676260728-1c00da094a0b"),
     assignedUniversity: "Usha Martin University",
     matchScore: 81,
   },
@@ -235,7 +237,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Citizen Coalition, Jharia",
     submittedDate: "2026-01-10",
     tags: ["Mining", "Safety", "Sensors", "GIS"],
-    image: "mine-subsidence",
+    image: photo("photo-1504307651254-35680f356dfd"),
     assignedUniversity: "Indian School of Mines (IIT-ISM) Dhanbad",
     matchScore: 91,
   },
@@ -256,7 +258,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Farmer Producer Organization, Ormanjhi",
     submittedDate: "2025-10-22",
     tags: ["Agriculture", "Cold Chain", "Solar"],
-    image: "cold-storage",
+    image: photo("photo-1501004318641-b39e6451bec6"),
     assignedUniversity: "Ranchi University",
     matchScore: 79,
   },
@@ -277,7 +279,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Disability Rights Forum, Jamshedpur",
     submittedDate: "2026-01-28",
     tags: ["Accessibility", "Transport", "Urban"],
-    image: "accessible-transport",
+    image: photo("photo-1556740749-887f6717d7e4"),
   },
   {
     id: "ch-006",
@@ -296,7 +298,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Block Development Office, Chhatarpur",
     submittedDate: "2025-12-15",
     tags: ["GIS", "Water", "Drought", "Agriculture"],
-    image: "groundwater",
+    image: photo("photo-1524592094714-0f0654e20314"),
     assignedUniversity: "Nilamber Pitamber University",
     matchScore: 72,
   },
@@ -317,7 +319,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Chas Municipal Corporation",
     submittedDate: "2025-08-19",
     tags: ["Waste Management", "Sanitation", "Urban"],
-    image: "waste-segregation",
+    image: photo("photo-1532996122724-e3c354a0b15b"),
     assignedUniversity: "Birla Institute of Technology, Mesra",
     matchScore: 88,
   },
@@ -338,7 +340,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Primary Health Centre, Kolebira",
     submittedDate: "2026-02-02",
     tags: ["Healthcare", "Telemedicine", "Tribal Welfare"],
-    image: "telemedicine",
+    image: photo("photo-1576091160550-2173dba999ef"),
   },
   {
     id: "ch-009",
@@ -357,7 +359,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Rural Electrification Cell, Giridih",
     submittedDate: "2025-11-29",
     tags: ["Energy", "Solar", "Micro-grid", "Rural"],
-    image: "solar-microgrid",
+    image: photo("photo-1497435334941-8c899ee9e8e9"),
     assignedUniversity: "Vinoba Bhave University",
     matchScore: 76,
   },
@@ -378,7 +380,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "District Collectorate, Hazaribagh",
     submittedDate: "2026-01-15",
     tags: ["GovTech", "Land Records", "Public Administration"],
-    image: "land-records",
+    image: photo("photo-1552664730-d307ca884978"),
   },
   {
     id: "ch-011",
@@ -397,7 +399,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "District Skill Development Mission",
     submittedDate: "2025-12-20",
     tags: ["Livelihoods", "Skilling", "Youth"],
-    image: "skill-mapping",
+    image: photo("photo-1522202176988-66273c2fd55f"),
     assignedUniversity: "National Institute of Technology, Jamshedpur",
     matchScore: 83,
   },
@@ -418,7 +420,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Rural Works Department, Dumka",
     submittedDate: "2026-02-10",
     tags: ["Infrastructure", "Flood Resilience", "Civil Engineering"],
-    image: "flood-road",
+    image: photo("photo-1504307651254-35680f356dfd"),
   },
   {
     id: "ch-013",
@@ -437,7 +439,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "District Health Society, Ranchi",
     submittedDate: "2025-09-30",
     tags: ["Healthcare", "Menstrual Health", "Education"],
-    image: "sanitary-vending",
+    image: photo("photo-1516549655169-df83a0774514"),
     assignedUniversity: "Ranchi University",
     matchScore: 75,
   },
@@ -458,7 +460,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "Residents Welfare Association, Chandankiyari",
     submittedDate: "2026-01-05",
     tags: ["Environment", "Air Quality", "IoT"],
-    image: "air-quality",
+    image: photo("photo-1473448912268-2022ce9509d8"),
     assignedUniversity: "National Institute of Technology, Jamshedpur",
     matchScore: 82,
   },
@@ -479,7 +481,7 @@ export const CHALLENGES: Challenge[] = [
     submittedBy: "District Immunisation Officer, Palamu",
     submittedDate: "2026-02-20",
     tags: ["Healthcare", "Cold Chain", "IoT", "Vaccines"],
-    image: "vaccine-coldchain",
+    image: photo("photo-1584515933487-779824d29309"),
   },
 ];
 
@@ -600,7 +602,7 @@ export const IMPACT_STORIES: ImpactStory[] = [
     before: "Frequent pump failures and limited water monitoring left residents without water for days at a time.",
     solution: "An IoT-based water monitoring system now tracks pump health and alerts maintenance crews before failures occur.",
     impactPoints: ["32% reduction in pump downtime", "1,200+ residents benefited", "Faster maintenance response time"],
-    image: "water-monitoring",
+    image: photo("photo-1541888946425-d81bb19240f5"),
   },
   {
     id: "story-002",
@@ -609,7 +611,7 @@ export const IMPACT_STORIES: ImpactStory[] = [
     before: "Mixed waste collection and open dumping created sanitation and health hazards across municipal wards.",
     solution: "A neighbourhood-scale composting and segregation model was deployed across 6 wards with community training.",
     impactPoints: ["9,400 residents served", "41% reduction in landfill waste", "Replicated in 3 additional wards"],
-    image: "waste-segregation",
+    image: photo("photo-1532996122724-e3c354a0b15b"),
   },
   {
     id: "story-003",
@@ -618,7 +620,7 @@ export const IMPACT_STORIES: ImpactStory[] = [
     before: "High school absenteeism among adolescent girls during menstruation due to lack of products and disposal facilities.",
     solution: "Low-cost vending and incineration units were piloted across 8 government schools in Bero block.",
     impactPoints: ["18% drop in absenteeism", "1,900 students benefited", "Model adopted by district health society"],
-    image: "sanitary-vending",
+    image: photo("photo-1516549655169-df83a0774514"),
   },
 ];
 

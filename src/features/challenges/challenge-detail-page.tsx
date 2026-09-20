@@ -29,6 +29,7 @@ export function ChallengeDetailPage() {
   const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
   const [institutions, setInstitutions] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
   const contributions = CHALLENGE_CONTRIBUTIONS.filter((item) => item.challengeId === challenge.id);
   const [appreciated, setAppreciated] = useState<string[]>(() => {
     try {
@@ -68,8 +69,12 @@ export function ChallengeDetailPage() {
 
   return (
     <div>
-      <div className="relative">
-        <DomainVisual domain={challenge.domain} className="h-56 w-full sm:h-72" />
+      <div className="relative h-56 overflow-hidden sm:h-72">
+        {!imageError && challenge.image ? (
+          <img src={challenge.image} alt={challenge.title} className="h-full w-full object-cover" onError={() => setImageError(true)} />
+        ) : (
+          <DomainVisual domain={challenge.domain} className="h-full w-full" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/10" />
         <div className="absolute inset-x-0 top-0 mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
           <button
