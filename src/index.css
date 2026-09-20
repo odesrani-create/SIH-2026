@@ -177,14 +177,24 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
     overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   img, video, svg {
     max-width: 100%;
+    display: block;
+  }
+
+  button, input, select, textarea {
+    min-height: 44px;
   }
 
   ::-webkit-scrollbar {

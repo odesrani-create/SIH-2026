@@ -56,7 +56,7 @@ function AppShell() {
   return (
     <div className="flex min-h-screen flex-col bg-jic-cream font-sans text-jic-charcoal">
       <Navbar />
-      <main className={isDashboard ? "flex-1 bg-muted/20" : "flex-1"}>
+      <main className={isDashboard ? "flex-1 bg-muted/20 pb-20 lg:pb-0" : "flex-1 pb-20 lg:pb-0"}>
         <CurrentPage />
       </main>
       <Footer />

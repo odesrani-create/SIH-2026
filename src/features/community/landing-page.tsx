@@ -55,7 +55,7 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
-            className="mt-8 max-w-4xl text-balance font-display text-5xl font-semibold leading-[0.98] sm:text-7xl lg:text-[5.5rem]"
+            className="mt-8 max-w-4xl text-balance font-display text-4xl font-semibold leading-[0.98] sm:text-7xl lg:text-[5.5rem]"
           >
             Turn local
             <br />
@@ -64,12 +64,12 @@ export function LandingPage() {
             <span className="text-jic-saffron">real solutions.</span>
           </motion.h1>
 
-          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="mt-8 grid gap-6 sm:mt-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.1 }}
-              className="max-w-lg text-lg leading-relaxed text-white/60"
+              className="max-w-lg text-base leading-relaxed text-white/60 sm:text-lg"
             >
               Connecting Jharkhand's communities, universities, innovators, industries and government to solve the
               challenges that matter most — end to end, in the open.
@@ -78,12 +78,12 @@ export function LandingPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.18 }}
-              className="flex flex-wrap items-center gap-3"
+              className="flex flex-col gap-3 sm:flex-row sm:flex-wrap"
             >
-              <Button size="lg" className="rounded-md bg-jic-saffron px-6 text-jic-deep hover:bg-jic-saffron/90" onClick={() => goTo("submit")}>
+              <Button size="lg" className="w-full rounded-md bg-jic-saffron px-6 text-jic-deep hover:bg-jic-saffron/90 sm:w-auto" onClick={() => goTo("submit")}>
                 Submit a Challenge <ArrowRight className="ml-1.5 h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline" className="rounded-md border-white/20 bg-transparent px-6 text-white hover:bg-white/10" onClick={() => goTo("challenges")}>
+              <Button size="lg" variant="outline" className="w-full rounded-md border-white/20 bg-transparent px-6 text-white hover:bg-white/10 sm:w-auto" onClick={() => goTo("challenges")}>
                 Explore Challenges
               </Button>
             </motion.div>

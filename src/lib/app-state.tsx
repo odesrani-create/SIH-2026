@@ -92,18 +92,46 @@ function readAccounts() {
   }
 }
 
+function getPreferredLandingPage(role?: UserRole): PageId {
+  return role ? ROLE_LANDING[role] ?? "landing" : "landing";
+}
+
 export function AppStateProvider({ children }: { children: ReactNode }) {
-  const [nav, setNav] = useState<NavState>({ page: "login", params: {} });
-  const [user, setUser] = useState<(DemoUser & { email?: string }) | null>(null);
+  const [nav, setNav] = useState<NavState>(() => {
+    if (typeof window === "undefined") return { page: "login", params: {} };
+    try {
+      const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
+      if (!stored) return { page: "login", params: {} };
+      const parsed = JSON.parse(stored) as { role?: UserRole };
+      return { page: getPreferredLandingPage(parsed.role), params: {} };
+    } catch {
+      window.localStorage.removeItem(SESSION_STORAGE_KEY);
+      return { page: "login", params: {} };
+    }
+  });
+  const [user, setUser] = useState<(DemoUser & { email?: string }) | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      window.localStorage.removeItem(SESSION_STORAGE_KEY);
+      return null;
+    }
+  });
 
   useEffect(() => {
     if (!supabase) {
       const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
       if (stored) {
         try {
-          setUser(JSON.parse(stored));
+          const parsed = JSON.parse(stored) as (DemoUser & { email?: string });
+          setUser(parsed);
+          setNav({ page: getPreferredLandingPage(parsed.role), params: {} });
         } catch {
           window.localStorage.removeItem(SESSION_STORAGE_KEY);
+          setUser(null);
+          setNav({ page: "login", params: {} });
         }
       }
       return;
@@ -142,11 +170,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
     void supabase.auth.getSession().then(({ data }) => {
       const sessionUser = data.session?.user;
-      if (sessionUser) void hydrateUser(sessionUser.id, sessionUser.email ?? "", sessionUser.user_metadata);
+      if (sessionUser) {
+        void hydrateUser(sessionUser.id, sessionUser.email ?? "", sessionUser.user_metadata);
+      } else {
+        setUser(null);
+        setNav({ page: "login", params: {} });
+      }
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session?.user) {
         setUser(null);
+        setNav({ page: "login", params: {} });
         persistSession(null);
         return;
       }
@@ -184,7 +218,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const nextUser = { name: ROLE_NAME[role], role, organization: ROLE_ORG[role] };
     setUser(nextUser);
     persistSession(nextUser);
-    setNav({ page: ROLE_LANDING[role], params: {} });
+    setNav({ page: getPreferredLandingPage(role), params: {} });
   };
 
   const loginWithCredentials = async (email: string, password: string) => {
@@ -238,7 +272,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const nextUser = { name: account.name, email: account.email, role, organization: account.organization ?? ROLE_ORG[role] };
     setUser(nextUser);
     persistSession(nextUser);
-    setNav({ page: ROLE_LANDING[role], params: {} });
+    setNav({ page: getPreferredLandingPage(role), params: {} });
   };
 
   const logout = async () => {
