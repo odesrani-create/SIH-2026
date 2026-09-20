@@ -230,7 +230,7 @@ export function SubmitChallengePage() {
             {step === 4 && <StepDuration form={form} update={update} />}
             {step === 5 && <StepAIValidation form={form} runValidation={runValidation} onViewChallenge={(id) => goTo("challenge-detail", { id })} />}
             {step === 6 && <StepOutcome form={form} update={update} />}
-            {step === 7 && <StepReview form={form} />}
+            {step === 7 && <StepReview form={form} onSubmit={submit} />}
           </motion.div>
         </AnimatePresence>
 
@@ -244,7 +244,7 @@ export function SubmitChallengePage() {
             </Button>
           ) : (
             <Button className="gap-1.5 bg-jic-deep text-jic-cream hover:bg-jic-deep/90" onClick={submit}>
-              Submit Challenge <ArrowRight className="h-4 w-4" />
+              Submit Problem <ArrowRight className="h-4 w-4" />
             </Button>
           )}
         </div>
@@ -536,7 +536,7 @@ function StepOutcome({ form, update }: { form: FormData; update: (p: Partial<For
   );
 }
 
-function StepReview({ form }: { form: FormData }) {
+function StepReview({ form, onSubmit }: { form: FormData; onSubmit: () => void }) {
   return (
     <div className="space-y-5">
       <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-jic-forest">
@@ -551,6 +551,17 @@ function StepReview({ form }: { form: FormData }) {
         <ReviewRow label="Location" value={[form.village, form.block, form.district].filter(Boolean).join(", ") || "—"} />
         <ReviewRow label="Evidence" value={form.evidenceFiles.length ? `${form.evidenceFiles.length} file(s) attached` : "None attached"} />
         <ReviewRow label="Desired outcome" value={form.outcome || "—"} />
+      </div>
+      <div className="rounded-xl border border-jic-forest/20 bg-jic-forest-light/30 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-jic-charcoal">Ready to submit your problem?</p>
+            <p className="text-xs text-muted-foreground">This will send the issue for AI review and matching.</p>
+          </div>
+          <Button type="button" className="gap-1.5 bg-jic-deep text-jic-cream hover:bg-jic-deep/90" onClick={onSubmit}>
+            Submit Problem <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       <p className="text-xs text-muted-foreground">By submitting, you confirm this information is accurate to the best of your knowledge.</p>
     </div>
