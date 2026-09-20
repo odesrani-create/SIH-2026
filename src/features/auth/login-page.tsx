@@ -18,7 +18,7 @@ const ROLES: { id: UserRole; label: string; icon: React.ElementType }[] = [
 ];
 
 export function LoginPage() {
-  const { loginWithCredentials, createAccount } = useAppState();
+  const { loginWithCredentials, loginWithGoogle, createAccount } = useAppState();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,6 +28,7 @@ export function LoginPage() {
   const [role, setRole] = useState<UserRole>("citizen");
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const switchMode = (next: AuthMode) => { setMode(next); setMessage(""); };
   const submit = async (event: FormEvent) => {
@@ -41,6 +42,16 @@ export function LoginPage() {
       ? await createAccount({ name, email, password, role, organization })
       : await loginWithCredentials(email, password);
     if (result) setMessage(result);
+  };
+
+  const continueWithGoogle = async () => {
+    setMessage("");
+    setIsGoogleLoading(true);
+    const result = await loginWithGoogle(role);
+    if (result) {
+      setMessage(result);
+      setIsGoogleLoading(false);
+    }
   };
 
   const title = mode === "signup" ? "Create your account" : mode === "forgot" ? "Reset your password" : "Welcome back";
@@ -61,7 +72,7 @@ export function LoginPage() {
           <form onSubmit={submit} className="space-y-4">
             {mode === "signup" && <><Field label="Full name"><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" required /></Field><Field label="Organization (optional)"><Input value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="University, company, or community" /></Field></>}
             <Field label="Email address"><div className="relative"><Mail className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required /></div></Field>
-            {mode !== "forgot" && <><Field label="I am joining as"><div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{ROLES.map((item) => <button type="button" key={item.id} onClick={() => setRole(item.id)} className={cn("min-h-10 rounded-lg border px-2 py-2 text-[11px] font-semibold sm:text-xs", role === item.id ? "border-jic-forest bg-jic-forest-light text-jic-forest" : "border-border bg-card text-muted-foreground")}>{item.label}</button>)}</div></Field><Field label="Password"><PasswordInput value={password} onChange={setPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} /></Field></>}
+            {mode !== "forgot" && <><Field label="I am joining as"><div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{ROLES.map((item) => <button type="button" key={item.id} onClick={() => setRole(item.id)} className={cn("min-h-10 rounded-lg border px-2 py-2 text-[11px] font-semibold sm:text-xs", role === item.id ? "border-jic-forest bg-jic-forest-light text-jic-forest" : "border-border bg-card text-muted-foreground")}>{item.label}</button>)}</div></Field><Button type="button" variant="outline" className="h-11 w-full gap-2" onClick={continueWithGoogle} disabled={isGoogleLoading}>{isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}</Button><div className="flex items-center gap-3 text-[11px] text-muted-foreground sm:text-xs"><span className="h-px flex-1 bg-border" /> or use password <span className="h-px flex-1 bg-border" /></div><Field label="Password"><PasswordInput value={password} onChange={setPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} /></Field></>}
             {mode === "signup" && <Field label="Confirm password"><PasswordInput value={confirmPassword} onChange={setConfirmPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} /></Field>}
             {mode === "signin" && <div className="flex justify-end"><button type="button" className="text-xs font-semibold text-jic-forest hover:underline" onClick={() => switchMode("forgot")}>Forgot password?</button></div>}
             {message && <p className="rounded-lg bg-jic-earth-light px-3 py-2 text-sm text-jic-earth">{message}</p>}
