@@ -73,6 +73,15 @@ export const DEMO_ACCOUNTS = [
 const ACCOUNT_STORAGE_KEY = "jic-auth-accounts";
 const SESSION_STORAGE_KEY = "jic-auth-session";
 
+function persistSession(user: (DemoUser & { email?: string }) | null) {
+  if (typeof window === "undefined") return;
+  if (!user) {
+    window.localStorage.removeItem(SESSION_STORAGE_KEY);
+    return;
+  }
+  window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+}
+
 function readAccounts() {
   const stored = window.localStorage.getItem(ACCOUNT_STORAGE_KEY);
   if (!stored) return DEMO_ACCOUNTS;
@@ -108,7 +117,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       if (!active) return;
       const role = data?.role as UserRole | undefined;
       if (role && data) {
-        setUser({ name: data.name, email: data.email, role, organization: data.organization ?? undefined });
+        const nextUser = { name: data.name, email: data.email, role, organization: data.organization ?? undefined };
+        setUser(nextUser);
+        persistSession(nextUser);
         return;
       }
       const metadataRole = metadata.role as UserRole | undefined;
@@ -121,7 +132,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           organization: String(metadata.organization ?? "") || null,
         };
         if (!data) await client.from("profiles").upsert(profile);
-        if (active) setUser({ name: profile.name, email, role: metadataRole, organization: profile.organization ?? undefined });
+        if (active) {
+          const nextUser = { name: profile.name, email, role: metadataRole, organization: profile.organization ?? undefined };
+          setUser(nextUser);
+          persistSession(nextUser);
+        }
       }
     };
 
@@ -132,6 +147,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session?.user) {
         setUser(null);
+        persistSession(null);
         return;
       }
       setTimeout(() => void hydrateUser(session.user.id, session.user.email ?? "", session.user.user_metadata), 0);
@@ -160,7 +176,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   };
 
   const login = (role: UserRole) => {
-    setUser({ name: ROLE_NAME[role], role, organization: ROLE_ORG[role] });
+    const nextUser = { name: ROLE_NAME[role], role, organization: ROLE_ORG[role] };
+    setUser(nextUser);
+    persistSession(nextUser);
     setNav({ page: ROLE_LANDING[role], params: {} });
   };
 
@@ -212,13 +230,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const loginWithAccount = (account: { name: string; email: string; role?: UserRole; organization?: string }) => {
     const role = account.role ?? "citizen";
-    setUser({ name: account.name, email: account.email, role, organization: account.organization ?? ROLE_ORG[role] });
+    const nextUser = { name: account.name, email: account.email, role, organization: account.organization ?? ROLE_ORG[role] };
+    setUser(nextUser);
+    persistSession(nextUser);
     setNav({ page: ROLE_LANDING[role], params: {} });
   };
 
   const logout = async () => {
     if (supabase) await supabase.auth.signOut();
-    window.localStorage.removeItem(SESSION_STORAGE_KEY);
+    persistSession(null);
     setUser(null);
     goTo("landing");
   };
