@@ -16,7 +16,10 @@ import { TrackChallengePage } from "@/features/track/track-challenge-page";
 import { LoginPage } from "@/features/auth/login-page";
 
 function CurrentPage() {
-  const { nav } = useAppState();
+  const { nav, user } = useAppState();
+  if (!user && nav.page !== "login") {
+    return <LoginPage />;
+  }
   switch (nav.page) {
     case "landing":
       return <LandingPage />;

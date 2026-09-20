@@ -93,7 +93,7 @@ function readAccounts() {
 }
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
-  const [nav, setNav] = useState<NavState>({ page: "landing", params: {} });
+  const [nav, setNav] = useState<NavState>({ page: "login", params: {} });
   const [user, setUser] = useState<(DemoUser & { email?: string }) | null>(null);
 
   useEffect(() => {
@@ -160,6 +160,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const goTo = (page: PageId, params: Record<string, string> = {}) => {
+    if (page !== "login" && !user) {
+      setNav({ page: "login", params: {} });
+      return;
+    }
+
     const requiredRoles: Partial<Record<PageId, UserRole[]>> = {
       "university-dashboard": ["university", "student", "faculty"],
       "university-workspace": ["university", "student", "faculty"],
